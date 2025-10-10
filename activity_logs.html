@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📋 Activity Logs - License Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+        }
+        
+        .user-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 40px;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #666;
+            text-decoration: none;
+        }
+        
+        .menu-item:hover {
+            background: #f0f0f0;
+            color: #667eea;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .content h2 {
+            color: #333;
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-bar select,
+        .filter-bar input {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .filter-bar select:focus,
+        .filter-bar input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn-export {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .log-timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .log-timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+        
+        .log-item {
+            position: relative;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .log-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .log-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #667eea;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #667eea;
+        }
+        
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .log-action {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+        
+        .log-time {
+            font-size: 13px;
+            color: #999;
+        }
+        
+        .log-user {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .log-details {
+            font-size: 14px;
+            color: #666;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .log-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            text-align: center;
+            margin-right: 5px;
+        }
+        
+        .action-create { color: #28a745; }
+        .action-edit { color: #ffc107; }
+        .action-delete { color: #dc3545; }
+        .action-login { color: #17a2b8; }
+        .action-approve { color: #28a745; }
+        .action-reject { color: #dc3545; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔐 License Admin Dashboard</h1>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <div class="user-badge">
+                👤 <span id="userName">Loading...</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-grid">
+            <div class="sidebar">
+                <a href="dashboard.html" class="menu-item">📊 Dashboard</a>
+                <a href="licenses.html" class="menu-item">📝 Licenses</a>
+                <a href="users.html" class="menu-item">👥 Users</a>
+                <a href="approvals.html" class="menu-item">📬 Approvals</a>
+                <div class="menu-item active">📋 Activity Logs</div>
+                <div class="menu-item" onclick="alert('Coming soon!')">⚙️ Settings</div>
+            </div>
+
+            <div class="content">
+                <div class="content-header">
+                    <h2>📋 Activity Logs</h2>
+                    <button class="btn-export" onclick="exportLogs()">📥 Export CSV</button>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalLogs">0</div>
+                        <div class="stat-label">Total Logs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="todayLogs">0</div>
+                        <div class="stat-label">Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="thisWeekLogs">0</div>
+                        <div class="stat-label">This Week</div>
+                    </div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <select id="actionFilter" onchange="loadLogs()">
+                        <option value="">All Actions</option>
+                        <option value="create_license">Create License</option>
+                        <option value="edit_license">Edit License</option>
+                        <option value="delete_license">Delete License</option>
+                        <option value="login">Login</option>
+                        <option value="approve_request">Approve Request</option>
+                        <option value="reject_request">Reject Request</option>
+                    </select>
+                    
+                    <select id="userFilter" onchange="loadLogs()">
+                        <option value="">All Users</option>
+                    </select>
+                    
+                    <input type="date" id="dateFilter" onchange="loadLogs()">
+                </div>
+
+                <!-- Logs Timeline -->
+                <div id="logsTimeline" class="log-timeline">
+                    <div class="loading">Loading activity logs...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://qbfhwvpgnbgjapkxrpqc.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentUser = null;
+        let allLogs = [];
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(localStorage.getItem('user') || 'null');
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            
+            if (!isLoggedIn || !user) {
+                alert('⚠️ Please login first!');
+                window.location.href = 'admin_login.html';
+                return;
+            }
+            
+            currentUser = user;
+            document.getElementById('userName').textContent = user.full_name || user.email;
+            
+            await loadUsers();
+            await loadLogs();
+        });
+
+        async function loadUsers() {
+            try {
+                const { data } = await supabase
+                    .from('admin_users')
+                    .select('email, full_name')
+                    .order('email');
+                
+                const userFilter = document.getElementById('userFilter');
+                data.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.email;
+                    option.textContent = user.full_name || user.email;
+                    userFilter.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        async function loadLogs() {
+            try {
+                let query = supabase
+                    .from('activity_logs')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(100);
+                
+                // Apply filters
+                const actionFilter = document.getElementById('actionFilter').value;
+                const userFilter = document.getElementById('userFilter').value;
+                const dateFilter = document.getElementById('dateFilter').value;
+                
+                if (actionFilter) {
+                    query = query.eq('action_type', actionFilter);
+                }
+                
+                if (userFilter) {
+                    query = query.eq('user_email', userFilter);
+                }
+                
+                if (dateFilter) {
+                    const startOfDay = new Date(dateFilter);
+                    const endOfDay = new Date(dateFilter);
+                    endOfDay.setDate(endOfDay.getDate() + 1);
+                    query = query.gte('created_at', startOfDay.toISOString())
+                                 .lt('created_at', endOfDay.toISOString());
+                }
+                
+                const { data, error } = await query;
+                
+                if (error) throw error;
+                
+                allLogs = data || [];
+                displayLogs(allLogs);
+                updateStats(allLogs);
+                
+            } catch (error) {
+                console.error('Error loading logs:', error);
+                document.getElementById('logsTimeline').innerHTML = 
+                    '<div class="empty-state">❌ Error loading logs</div>';
+            }
+        }
+
+        function displayLogs(logs) {
+            const container = document.getElementById('logsTimeline');
+            
+            if (logs.length === 0) {
+                container.innerHTML = '<div class="empty-state">📋 No activity logs found</div>';
+                return;
+            }
+            
+            container.innerHTML = logs.map(log => {
+                const actionClass = getActionClass(log.action_type);
+                const icon = getActionIcon(log.action_type);
+                
+                return `
+                    <div class="log-item">
+                        <div class="log-header">
+                            <div class="log-action ${actionClass}">
+                                <span class="log-icon">${icon}</span>
+                                ${formatActionType(log.action_type)}
+                            </div>
+                            <div class="log-time">
+                                ${formatTimeAgo(log.created_at)}
+                            </div>
+                        </div>
+                        <div class="log-user">
+                            👤 ${log.user_email} (${log.user_role})
+                        </div>
+                        ${log.action_details ? `
+                            <div class="log-details">
+                                ${log.action_details}
+                                ${log.license_key ? `<br>📝 License: ${log.license_key}` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStats(logs) {
+            document.getElementById('totalLogs').textContent = logs.length;
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayLogs = logs.filter(log => new Date(log.created_at) >= today);
+            document.getElementById('todayLogs').textContent = todayLogs.length;
+            
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const weekLogs = logs.filter(log => new Date(log.created_at) >= weekAgo);
+            document.getElementById('thisWeekLogs').textContent = weekLogs.length;
+        }
+
+        function getActionClass(action) {
+            if (action.includes('create')) return 'action-create';
+            if (action.includes('edit') || action.includes('update')) return 'action-edit';
+            if (action.includes('delete')) return 'action-delete';
+            if (action.includes('login')) return 'action-login';
+            if (action.includes('approve')) return 'action-approve';
+            if (action.includes('reject')) return 'action-reject';
+            return '';
+        }
+
+        function getActionIcon(action) {
+            const icons = {
+                'create_license': '➕',
+                'edit_license': '✏️',
+                'delete_license': '🗑️',
+                'login': '🔐',
+                'logout': '🚪',
+                'approve_request': '✅',
+                'reject_request': '❌',
+                'invite_user': '📧',
+                'deactivate_user': '🔒'
+            };
+            return icons[action] || '📋';
+        }
+
+        function formatActionType(action) {
+            return action.split('_').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+        }
+
+        function formatTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+            if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`;
+            
+            return date.toLocaleDateString('th-TH', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function exportLogs() {
+            if (allLogs.length === 0) {
+                alert('No logs to export!');
+                return;
+            }
+            
+            const csv = [
+                ['Time', 'User', 'Role', 'Action', 'Details', 'License Key', 'IP Address'].join(','),
+                ...allLogs.map(log => [
+                    new Date(log.created_at).toLocaleString('th-TH'),
+                    log.user_email,
+                    log.user_role,
+                    log.action_type,
+                    log.action_details || '',
+                    log.license_key || '',
+                    log.ip_address || ''
+                ].map(field => `"${field}"`).join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `activity_logs_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            
+            alert('✅ Logs exported successfully!');
+        }
+
+        function logout() {
+            if (confirm('ต้องการ Logout ใช่ไหม?')) {
+                localStorage.removeItem('user');
+                localStorage.removeItem('isLoggedIn');
+                window.location.href = 'admin_login.html';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📬 Approvals - License Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+        }
+        
+        .user-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 40px;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #666;
+            text-decoration: none;
+        }
+        
+        .menu-item:hover {
+            background: #f0f0f0;
+            color: #667eea;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .content h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .approval-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .approval-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .approval-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .approval-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .approval-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .info-item {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .approval-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-approve {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-approve:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .btn-reject {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-reject:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .btn-view {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔐 License Admin Dashboard</h1>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <div class="user-badge">
+                👤 <span id="userName">Loading...</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-grid">
+            <div class="sidebar">
+                <a href="dashboard.html" class="menu-item">📊 Dashboard</a>
+                <a href="licenses.html" class="menu-item">📝 Licenses</a>
+                <a href="users.html" class="menu-item">👥 Users</a>
+                <div class="menu-item active">📬 Approvals</div>
+                <div class="menu-item" onclick="alert('Coming soon!')">📋 Activity Logs</div>
+                <div class="menu-item" onclick="alert('Coming soon!')">⚙️ Settings</div>
+            </div>
+
+            <div class="content">
+                <h2>📬 Pending Approvals</h2>
+                
+                <div class="alert alert-info" id="roleInfo">
+                    ℹ️ Loading...
+                </div>
+
+                <div id="approvalsList">
+                    <div class="empty-state">
+                        <div class="empty-icon">⏳</div>
+                        <p>Loading approvals...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://qbfhwvpgnbgjapkxrpqc.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentUser = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(localStorage.getItem('user') || 'null');
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            
+            if (!isLoggedIn || !user) {
+                alert('⚠️ Please login first!');
+                window.location.href = 'admin_login.html';
+                return;
+            }
+            
+            currentUser = user;
+            document.getElementById('userName').textContent = user.full_name || user.email;
+            
+            // Set role info
+            const roleInfo = document.getElementById('roleInfo');
+            if (user.role === 'owner') {
+                roleInfo.textContent = '👑 As Owner, you can approve ALL requests from Admin and Staff.';
+            } else if (user.role === 'admin') {
+                roleInfo.textContent = '⚙️ As Admin, you can approve requests from Staff only.';
+            } else {
+                roleInfo.textContent = '📝 As Staff, you can only view your own submitted requests.';
+            }
+            
+            await loadApprovals();
+        });
+
+        async function loadApprovals() {
+            try {
+                let query = supabase
+                    .from('pending_approvals')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                // Filter based on role
+                if (currentUser.role === 'admin') {
+                    // Admin sees only Staff requests (requires_level = 2)
+                    query = query.eq('requires_level', 2).eq('status', 'pending');
+                } else if (currentUser.role === 'staff') {
+                    // Staff sees only their own requests
+                    query = query.eq('requested_by_email', currentUser.email);
+                } else {
+                    // Owner sees all pending requests
+                    query = query.eq('status', 'pending');
+                }
+                
+                const { data, error } = await query;
+                
+                if (error) throw error;
+                
+                displayApprovals(data || []);
+                
+            } catch (error) {
+                console.error('Error loading approvals:', error);
+                document.getElementById('approvalsList').innerHTML = 
+                    '<div class="empty-state"><div class="empty-icon">❌</div><p>Error loading approvals</p></div>';
+            }
+        }
+
+        function displayApprovals(approvals) {
+            const container = document.getElementById('approvalsList');
+            
+            if (approvals.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">✅</div>
+                        <p>No pending approvals</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = approvals.map(approval => {
+                const actionData = approval.action_data;
+                const canApprove = (currentUser.role === 'owner') || 
+                                 (currentUser.role === 'admin' && approval.requires_level <= 2);
+                
+                const statusBadge = approval.status === 'pending' ? 
+                    '<span class="approval-badge">⏳ Pending</span>' :
+                    approval.status === 'approved' ?
+                    '<span class="approval-badge" style="background: #d4edda; color: #155724;">✅ Approved</span>' :
+                    '<span class="approval-badge" style="background: #f8d7da; color: #721c24;">❌ Rejected</span>';
+                
+                return `
+                    <div class="approval-card">
+                        <div class="approval-header">
+                            <div class="approval-title">
+                                ${getRequestIcon(approval.request_type)} ${getRequestTitle(approval.request_type)}
+                            </div>
+                            ${statusBadge}
+                        </div>
+                        
+                        <div class="approval-info">
+                            <div class="info-item">
+                                <span class="info-label">Requested by:</span><br>
+                                ${approval.requested_by_email} (${approval.requested_by_role})
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Requested:</span><br>
+                                ${new Date(approval.created_at).toLocaleString('th-TH')}
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Details:</span><br>
+                                ${formatActionData(actionData)}
+                            </div>
+                        </div>
+                        
+                        ${approval.status === 'pending' && canApprove ? `
+                            <div class="approval-actions">
+                                <button class="btn btn-approve" onclick="approveRequest(${approval.id})">
+                                    ✅ Approve
+                                </button>
+                                <button class="btn btn-reject" onclick="rejectRequest(${approval.id})">
+                                    ❌ Reject
+                                </button>
+                                <button class="btn btn-view" onclick="viewDetails(${approval.id})">
+                                    👁️ View Details
+                                </button>
+                            </div>
+                        ` : ''}
+                        
+                        ${approval.status !== 'pending' ? `
+                            <div class="info-item" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #dee2e6;">
+                                <span class="info-label">Reviewed by:</span> ${approval.reviewed_by_email || 'N/A'}<br>
+                                <span class="info-label">Reviewed at:</span> ${approval.reviewed_at ? new Date(approval.reviewed_at).toLocaleString('th-TH') : 'N/A'}
+                                ${approval.review_notes ? `<br><span class="info-label">Notes:</span> ${approval.review_notes}` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getRequestIcon(type) {
+            const icons = {
+                'create_license': '➕',
+                'edit_license': '✏️',
+                'delete_license': '🗑️',
+                'revoke_license': '🔒',
+                'manage_users': '👥'
+            };
+            return icons[type] || '📋';
+        }
+
+        function getRequestTitle(type) {
+            const titles = {
+                'create_license': 'Create License',
+                'edit_license': 'Edit License',
+                'delete_license': 'Delete License',
+                'revoke_license': 'Revoke License',
+                'manage_users': 'Manage Users'
+            };
+            return titles[type] || type;
+        }
+
+        function formatActionData(data) {
+            if (!data) return 'N/A';
+            if (data.license_key) return `License: ${data.license_key}`;
+            if (data.account_id) return `Account: ${data.account_id}`;
+            return JSON.stringify(data).substring(0, 50) + '...';
+        }
+
+        async function approveRequest(id) {
+            if (!confirm('✅ Approve this request?')) return;
+            
+            try {
+                const { error } = await supabase
+                    .from('pending_approvals')
+                    .update({
+                        status: 'approved',
+                        reviewed_by_email: currentUser.email,
+                        reviewed_by_level: currentUser.role_level,
+                        reviewed_at: new Date().toISOString()
+                    })
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                alert('✅ Request approved successfully!');
+                await loadApprovals();
+                
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        async function rejectRequest(id) {
+            const reason = prompt('❌ Reason for rejection:');
+            if (!reason) return;
+            
+            try {
+                const { error } = await supabase
+                    .from('pending_approvals')
+                    .update({
+                        status: 'rejected',
+                        reviewed_by_email: currentUser.email,
+                        reviewed_by_level: currentUser.role_level,
+                        reviewed_at: new Date().toISOString(),
+                        review_notes: reason
+                    })
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                alert('❌ Request rejected!');
+                await loadApprovals();
+                
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        function viewDetails(id) {
+            alert('View details - Coming soon!');
+        }
+
+        function logout() {
+            if (confirm('ต้องการ Logout ใช่ไหม?')) {
+                localStorage.removeItem('user');
+                localStorage.removeItem('isLoggedIn');
+                window.location.href = 'admin_login.html';
+            }
+        }
+    </script>
+</body>
+</html>

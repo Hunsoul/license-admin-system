@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚙️ Settings - License Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+        }
+        
+        .user-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 40px;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #666;
+            text-decoration: none;
+        }
+        
+        .menu-item:hover {
+            background: #f0f0f0;
+            color: #667eea;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .content h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .settings-section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .settings-section:last-child {
+            border-bottom: none;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .setting-info h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .setting-info p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .info-card {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .info-card h4 {
+            color: #1565c0;
+            margin-bottom: 5px;
+        }
+        
+        .info-card p {
+            color: #0d47a1;
+            font-size: 14px;
+        }
+        
+        .system-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .info-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔐 License Admin Dashboard</h1>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <div class="user-badge">
+                👤 <span id="userName">Loading...</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-grid">
+            <div class="sidebar">
+                <a href="dashboard.html" class="menu-item">📊 Dashboard</a>
+                <a href="licenses.html" class="menu-item">📝 Licenses</a>
+                <a href="users.html" class="menu-item">👥 Users</a>
+                <a href="approvals.html" class="menu-item">📬 Approvals</a>
+                <a href="activity_logs.html" class="menu-item">📋 Activity Logs</a>
+                <div class="menu-item active">⚙️ Settings</div>
+            </div>
+
+            <div class="content">
+                <h2>⚙️ Settings</h2>
+
+                <!-- Profile Section -->
+                <div class="settings-section">
+                    <div class="section-title">👤 Profile Settings</div>
+                    
+                    <div class="info-card">
+                        <h4>Account Information</h4>
+                        <p id="accountInfo">Loading...</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="fullName" placeholder="Your full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="email" readonly style="background: #f0f0f0;">
+                    </div>
+
+                    <button class="btn btn-primary" onclick="updateProfile()">
+                        💾 Save Profile
+                    </button>
+                </div>
+
+                <!-- Password Section -->
+                <div class="settings-section">
+                    <div class="section-title">🔒 Change Password</div>
+
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <input type="password" id="currentPassword" placeholder="Enter current password">
+                    </div>
+
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" id="newPassword" placeholder="Enter new password">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                    </div>
+
+                    <button class="btn btn-primary" onclick="changePassword()">
+                        🔐 Change Password
+                    </button>
+                </div>
+
+                <!-- System Info Section -->
+                <div class="settings-section">
+                    <div class="section-title">📊 System Information</div>
+
+                    <div class="system-info">
+                        <div class="info-item">
+                            <div class="info-label">Version</div>
+                            <div class="info-value">1.0.0</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Database</div>
+                            <div class="info-value">Supabase</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Total Licenses</div>
+                            <div class="info-value" id="totalLicenses">0</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Total Users</div>
+                            <div class="info-value" id="totalUsers">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="settings-section">
+                    <div class="section-title" style="color: #dc3545;">⚠️ Danger Zone</div>
+
+                    <div class="setting-item" style="background: #f8d7da;">
+                        <div class="setting-info">
+                            <h4 style="color: #721c24;">Clear All Activity Logs</h4>
+                            <p style="color: #721c24;">Permanently delete all activity logs (not recommended)</p>
+                        </div>
+                        <button class="btn btn-danger" onclick="clearLogs()">
+                            🗑️ Clear Logs
+                        </button>
+                    </div>
+
+                    <div class="setting-item" style="background: #f8d7da; margin-top: 15px;">
+                        <div class="setting-info">
+                            <h4 style="color: #721c24;">Delete Account</h4>
+                            <p style="color: #721c24;">Permanently delete your account (cannot be undone)</p>
+                        </div>
+                        <button class="btn btn-danger" onclick="deleteAccount()">
+                            ⛔ Delete Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://qbfhwvpgnbgjapkxrpqc.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentUser = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(localStorage.getItem('user') || 'null');
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            
+            if (!isLoggedIn || !user) {
+                alert('⚠️ Please login first!');
+                window.location.href = 'admin_login.html';
+                return;
+            }
+            
+            currentUser = user;
+            document.getElementById('userName').textContent = user.full_name || user.email;
+            
+            // Load profile data
+            document.getElementById('fullName').value = user.full_name || '';
+            document.getElementById('email').value = user.email;
+            document.getElementById('accountInfo').textContent = 
+                `Role: ${user.role.toUpperCase()} | Email: ${user.email}`;
+            
+            await loadSystemStats();
+        });
+
+        async function loadSystemStats() {
+            try {
+                const { count: licCount } = await supabase
+                    .from('licenses')
+                    .select('*', { count: 'exact', head: true });
+                
+                const { count: userCount } = await supabase
+                    .from('admin_users')
+                    .select('*', { count: 'exact', head: true });
+                
+                document.getElementById('totalLicenses').textContent = licCount || 0;
+                document.getElementById('totalUsers').textContent = userCount || 0;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function updateProfile() {
+            const fullName = document.getElementById('fullName').value;
+            
+            if (!fullName) {
+                alert('⚠️ Please enter your full name!');
+                return;
+            }
+            
+            try {
+                const { error } = await supabase
+                    .from('admin_users')
+                    .update({ full_name: fullName })
+                    .eq('email', currentUser.email);
+                
+                if (error) throw error;
+                
+                // Update localStorage
+                currentUser.full_name = fullName;
+                localStorage.setItem('user', JSON.stringify(currentUser));
+                
+                alert('✅ Profile updated successfully!');
+                location.reload();
+                
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        function changePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPwd = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            
+            if (!current || !newPwd || !confirm) {
+                alert('⚠️ Please fill all password fields!');
+                return;
+            }
+            
+            if (newPwd !== confirm) {
+                alert('❌ New passwords do not match!');
+                return;
+            }
+            
+            if (newPwd.length < 8) {
+                alert('❌ Password must be at least 8 characters!');
+                return;
+            }
+            
+            alert('⚠️ Password change requires Supabase Auth API.\n\nFor now, this is a placeholder.\n\nIn production, use supabase.auth.updateUser()');
+        }
+
+        function clearLogs() {
+            if (!confirm('⚠️ Delete ALL activity logs?\n\nThis action CANNOT be undone!')) {
+                return;
+            }
+            
+            if (!confirm('❌ Are you ABSOLUTELY sure?\n\nThis will permanently delete all logs!')) {
+                return;
+            }
+            
+            alert('⚠️ This feature requires Owner permission.\n\nFor safety, this is disabled in demo.');
+        }
+
+        function deleteAccount() {
+            alert('⛔ Account deletion is disabled for safety.\n\nContact system administrator if you need to delete your account.');
+        }
+
+        function logout() {
+            if (confirm('ต้องการ Logout ใช่ไหม?')) {
+                localStorage.removeItem('user');
+                localStorage.removeItem('isLoggedIn');
+                window.location.href = 'admin_login.html';
+            }
+        }
+    </script>
+</body>
+</html>

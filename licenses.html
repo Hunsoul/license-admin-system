@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Licenses - License Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 40px;
+        }
+        
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #666;
+            text-decoration: none;
+        }
+        
+        .menu-item:hover {
+            background: #f0f0f0;
+            color: #667eea;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        /* Content */
+        .content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .content-header h2 {
+            color: #333;
+        }
+        
+        .create-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Search Bar */
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-bar input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        
+        .search-bar input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-expired {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            margin: 0 4px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            color: #333;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+        
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🔐 License Admin Dashboard</h1>
+        <div class="user-info">
+            <div class="user-badge" id="userBadge">
+                👤 <span id="userName">Loading...</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="content-grid">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <a href="dashboard.html" class="menu-item">
+                    📊 Dashboard
+                </a>
+                <div class="menu-item active">
+                    📝 Licenses
+                </div>
+                <a href="users.html" class="menu-item">
+                    👥 Users
+                </a>
+                    <a href="approvals.html" class="menu-item">
+                    📬 Approvals
+                    </a>
+                <a href="activity_logs.html" class="menu-item">
+                   📋 Activity Logs
+                </a>
+                <a href="settings.html" class="menu-item">
+                    ⚙️ Settings
+                </a>
+            </div>
+
+            <!-- Main Content -->
+            <div class="content">
+                <div class="content-header">
+                    <h2>📝 License Management</h2>
+                    <button class="create-btn" onclick="openCreateModal()">
+                        ➕ Create License
+                    </button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="🔍 Search by License Key or Account ID..." onkeyup="searchLicenses()">
+                </div>
+
+                <!-- Table -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>License Key</th>
+                                <th>Account ID</th>
+                                <th>HWID</th>
+                                <th>Expiry Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="licenseTable">
+                            <tr>
+                                <td colspan="6" class="loading">Loading licenses...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div id="licenseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">➕ Create New License</h3>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            
+            <form id="licenseForm" onsubmit="saveLicense(event)">
+                <input type="hidden" id="editMode" value="false">
+                <input type="hidden" id="editLicenseKey" value="">
+                
+                <div class="form-group" id="licenseKeyGroup">
+                    <label>License Key</label>
+                    <input type="text" id="licenseKey" placeholder="AUTO (will generate)" readonly style="background: #f0f0f0;">
+                </div>
+                
+                <div class="form-group">
+                    <label>Account ID *</label>
+                    <input type="number" id="accountId" placeholder="Enter MT5 Account ID" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Validity (Days) *</label>
+                    <input type="number" id="validityDays" value="365" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Max Devices</label>
+                    <input type="number" id="maxDevices" value="1" required>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Create License</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://qbfhwvpgnbgjapkxrpqc.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let allLicenses = [];
+        let currentUser = null;
+
+        // Check login
+        window.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(localStorage.getItem('user') || 'null');
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            
+            if (!isLoggedIn || !user) {
+                alert('⚠️ Please login first!');
+                window.location.href = 'admin_login.html';
+                return;
+            }
+            
+            currentUser = user;
+            document.getElementById('userName').textContent = user.full_name || user.email;
+            
+            await loadLicenses();
+        });
+
+        // Load Licenses
+        async function loadLicenses() {
+            try {
+                const { data, error } = await supabase
+                    .from('licenses')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                allLicenses = data || [];
+                displayLicenses(allLicenses);
+                
+            } catch (error) {
+                console.error('Error loading licenses:', error);
+                document.getElementById('licenseTable').innerHTML = 
+                    '<tr><td colspan="6" style="text-align:center;color:red;">Error loading licenses</td></tr>';
+            }
+        }
+
+        // Display Licenses
+        function displayLicenses(licenses) {
+            const tbody = document.getElementById('licenseTable');
+            
+            if (licenses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;">No licenses found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = licenses.map(lic => {
+                const expiryDate = new Date(lic.expiry_date);
+                const now = new Date();
+                const isExpired = expiryDate < now;
+                const isActive = lic.is_active && !isExpired;
+                
+                return `
+                    <tr>
+                        <td><strong>${lic.license_key}</strong></td>
+                        <td>${lic.account_id}</td>
+                        <td>${lic.hwid || '<em style="color:#999;">Not registered</em>'}</td>
+                        <td>${expiryDate.toLocaleDateString('th-TH')}</td>
+                        <td>
+                            <span class="status-badge ${isActive ? 'status-active' : 'status-expired'}">
+                                ${isActive ? '✅ Active' : '❌ Expired'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="action-btn" onclick="viewLicense('${lic.license_key}')" title="View">👁️</button>
+                            <button class="action-btn" onclick="editLicense('${lic.license_key}')" title="Edit">✏️</button>
+                            <button class="action-btn" onclick="deleteLicense('${lic.license_key}')" title="Delete">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Search Licenses
+        function searchLicenses() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allLicenses.filter(lic => 
+                lic.license_key.toLowerCase().includes(searchTerm) ||
+                lic.account_id.toString().includes(searchTerm)
+            );
+            displayLicenses(filtered);
+        }
+
+        // Open Create Modal
+        function openCreateModal() {
+            document.getElementById('modalTitle').textContent = '➕ Create New License';
+            document.getElementById('licenseForm').reset();
+            document.getElementById('validityDays').value = 365;
+            document.getElementById('maxDevices').value = 1;
+            document.getElementById('editMode').value = 'false';
+            document.getElementById('licenseKeyGroup').style.display = 'block';
+            document.getElementById('submitBtn').textContent = 'Create License';
+            document.getElementById('licenseModal').classList.add('show');
+        }
+
+        // Close Modal
+        function closeModal() {
+            document.getElementById('licenseModal').classList.remove('show');
+        }
+
+        // Save License (Create or Update)
+        async function saveLicense(event) {
+            event.preventDefault();
+            
+            const editMode = document.getElementById('editMode').value === 'true';
+            const accountId = document.getElementById('accountId').value;
+            const validityDays = document.getElementById('validityDays').value;
+            const maxDevices = document.getElementById('maxDevices').value;
+            
+            try {
+                if (editMode) {
+                    // UPDATE existing license
+                    const licenseKey = document.getElementById('editLicenseKey').value;
+                    
+                    // Calculate NEW Expiry Date (from now)
+                    const expiryDate = new Date();
+                    expiryDate.setDate(expiryDate.getDate() + parseInt(validityDays));
+                    
+                    const { error } = await supabase
+                        .from('licenses')
+                        .update({
+                            account_id: parseInt(accountId),
+                            expiry_date: expiryDate.toISOString(),
+                            max_devices: parseInt(maxDevices)
+                        })
+                        .eq('license_key', licenseKey);
+                    
+                    if (error) throw error;
+                    
+                    alert('✅ License updated successfully!\n\nLicense Key: ' + licenseKey + '\n\nNew Expiry: ' + expiryDate.toLocaleDateString('th-TH'));
+                    
+                } else {
+                    // CREATE new license
+                    const licenseKey = 'LIC-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                    
+                    const expiryDate = new Date();
+                    expiryDate.setDate(expiryDate.getDate() + parseInt(validityDays));
+                    
+                    const { error } = await supabase
+                        .from('licenses')
+                        .insert([{
+                            license_key: licenseKey,
+                            account_id: parseInt(accountId),
+                            expiry_date: expiryDate.toISOString(),
+                            max_devices: parseInt(maxDevices),
+                            is_active: true
+                        }]);
+                    
+                    if (error) throw error;
+                    
+                    alert('✅ License created successfully!\n\nLicense Key: ' + licenseKey);
+                }
+                
+                closeModal();
+                await loadLicenses();
+                
+            } catch (error) {
+                console.error('Error saving license:', error);
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        // View License
+        function viewLicense(key) {
+            const lic = allLicenses.find(l => l.license_key === key);
+            if (lic) {
+                alert(`📝 License Details:\n\nKey: ${lic.license_key}\nAccount: ${lic.account_id}\nHWID: ${lic.hwid || 'Not registered'}\nExpiry: ${new Date(lic.expiry_date).toLocaleDateString('th-TH')}\nMax Devices: ${lic.max_devices || 1}\nStatus: ${lic.is_active ? 'Active' : 'Inactive'}`);
+            }
+        }
+
+        // Edit License
+        function editLicense(key) {
+            const lic = allLicenses.find(l => l.license_key === key);
+            if (!lic) return;
+            
+            // Set to edit mode
+            document.getElementById('editMode').value = 'true';
+            document.getElementById('editLicenseKey').value = key;
+            
+            // Update modal title
+            document.getElementById('modalTitle').textContent = '✏️ Edit License: ' + key;
+            
+            // Hide license key field
+            document.getElementById('licenseKeyGroup').style.display = 'none';
+            
+            // Fill form with existing data
+            document.getElementById('accountId').value = lic.account_id;
+            
+            // Calculate remaining days
+            const expiryDate = new Date(lic.expiry_date);
+            const now = new Date();
+            const remainingDays = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+            document.getElementById('validityDays').value = Math.max(1, remainingDays);
+            
+            document.getElementById('maxDevices').value = lic.max_devices || 1;
+            
+            // Change button text
+            document.getElementById('submitBtn').textContent = 'Update License';
+            
+            // Show modal
+            document.getElementById('licenseModal').classList.add('show');
+        }
+
+        // Delete License
+        async function deleteLicense(key) {
+            if (!confirm(`⚠️ Delete license ${key}?\n\nThis action cannot be undone!`)) {
+                return;
+            }
+            
+            try {
+                const { error } = await supabase
+                    .from('licenses')
+                    .delete()
+                    .eq('license_key', key);
+                
+                if (error) throw error;
+                
+                alert('✅ License deleted successfully!');
+                await loadLicenses();
+                
+            } catch (error) {
+                console.error('Error deleting license:', error);
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('ต้องการ Logout ใช่ไหม?')) {
+                localStorage.removeItem('user');
+                localStorage.removeItem('isLoggedIn');
+                window.location.href = 'admin_login.html';
+            }
+        }
+    </script>
+</body>
+</html>
