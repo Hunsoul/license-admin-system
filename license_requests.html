@@ -15,25 +15,198 @@
             background: #f5f7fa;
             min-height: 100vh;
         }
+        
+        /* Header */
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px 40px;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            height: 60px;
         }
-        .header h1 {
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
             font-size: 24px;
+            font-weight: bold;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        .btn-group {
+        
+        .header-right {
             display: flex;
-            gap: 10px;
+            align-items: center;
+            gap: 20px;
         }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .logout-btn {
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Layout */
+        .layout {
+            display: flex;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            position: fixed;
+            left: 0;
+            top: 60px;
+            bottom: 0;
+            overflow-y: auto;
+            padding: 20px 0;
+            transition: transform 0.3s;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-section-title {
+            padding: 0 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #999;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-item:hover {
+            background: #f8f9fa;
+            color: #667eea;
+        }
+        
+        .sidebar-item.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
+            color: #667eea;
+            border-left-color: #667eea;
+            font-weight: 600;
+        }
+        
+        .sidebar-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .sidebar-divider {
+            height: 1px;
+            background: #eee;
+            margin: 15px 20px;
+        }
+        
+        /* Content */
+        .content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 30px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-owner {
+            background: #ffd700;
+            color: #000;
+        }
+        
+        .badge-admin {
+            background: #667eea;
+            color: white;
+        }
+        
+        .badge-staff {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 150;
+        }
+        
+        .sidebar-overlay.open {
+            display: block;
+        }
+        
         button {
             padding: 10px 20px;
             border: none;
@@ -70,11 +243,7 @@
         .btn-secondary:hover {
             background: #5a6268;
         }
-        .container {
-            max-width: 1400px;
-            margin: 40px auto;
-            padding: 0 40px;
-        }
+        
         .toolbar {
             background: white;
             padding: 20px;
@@ -126,7 +295,7 @@
             background: white;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            overflow: hidden;
+            overflow-x: auto;
         }
         table {
             width: 100%;
@@ -280,86 +449,233 @@
             font-size: 64px;
             margin-bottom: 20px;
         }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 200;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .header {
+                padding: 10px 15px;
+            }
+            
+            .logo span {
+                display: none;
+            }
+            
+            .user-info span:not(.badge) {
+                display: none;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-value {
+                font-size: 24px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+            
+            .days-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .toolbar {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+        }
+        
+        /* Tablet Responsive */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .content {
+                margin-left: 200px;
+                padding: 20px;
+            }
+            
+            .sidebar-item {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            
+            .logo {
+                font-size: 20px;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>📬 License Requests</h1>
-        <div class="btn-group">
-            <button class="btn-secondary" onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
-            <button class="btn-secondary" onclick="window.location.href='licenses.html'">🔑 Licenses</button>
-            <button class="btn-secondary" onclick="logout()">🚪 Logout</button>
+        <div class="header-left">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="logo">
+                🔐 <span>License System</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span>👤</span>
+                <span id="userName">Admin</span>
+                <span id="userRole" class="badge badge-admin">ADMIN</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                🚪 <span>Logout</span>
+            </button>
         </div>
     </div>
 
-    <div class="container">
-        <!-- Stats -->
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-value" id="pendingCount">0</div>
-                <div class="stat-label">⏳ รออนุมัติ</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="approvedCount">0</div>
-                <div class="stat-label">✅ อนุมัติแล้ว</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="rejectedCount">0</div>
-                <div class="stat-label">❌ ปฏิเสธแล้ว</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalCount">0</div>
-                <div class="stat-label">📊 ทั้งหมด</div>
-            </div>
-        </div>
-
-        <!-- Toolbar -->
-        <div class="toolbar">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="🔍 ค้นหา Account ID, ชื่อ, Email...">
-            </div>
-            <div class="filter-select">
-                <select id="statusFilter">
-                    <option value="all">ทุกสถานะ</option>
-                    <option value="pending" selected>รออนุมัติ</option>
-                    <option value="approved">อนุมัติแล้ว</option>
-                    <option value="rejected">ปฏิเสธแล้ว</option>
-                </select>
-            </div>
-            <button class="btn-primary" onclick="loadRequests()">🔄 Refresh</button>
-        </div>
-
-        <!-- Table -->
-        <div class="requests-table">
-            <div class="loading" id="loading" style="display: none;">
-                🔄 กำลังโหลดข้อมูล...
+    <div class="layout">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+        
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Main Menu</div>
+                <a href="dashboard.html" class="sidebar-item">
+                    <span class="sidebar-icon">🏠</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="license_requests.html" class="sidebar-item active">
+                    <span class="sidebar-icon">📬</span>
+                    <span>License Requests</span>
+                </a>
+                <a href="licenses.html" class="sidebar-item">
+                    <span class="sidebar-icon">🔑</span>
+                    <span>Licenses</span>
+                </a>
+                <a href="users.html" class="sidebar-item">
+                    <span class="sidebar-icon">👥</span>
+                    <span>Users</span>
+                </a>
             </div>
             
-            <div class="empty-state" id="emptyState" style="display: none;">
-                <div class="empty-state-icon">📭</div>
-                <h3>ไม่มีคำขอ</h3>
-                <p>ยังไม่มีคำขอ License ในขณะนี้</p>
+            <div class="sidebar-divider"></div>
+            
+            <div class="sidebar-section" id="adminSection">
+                <div class="sidebar-section-title">Administration</div>
+                <a href="team.html" class="sidebar-item">
+                    <span class="sidebar-icon">👔</span>
+                    <span>Team Management</span>
+                </a>
+                <a href="approvals.html" class="sidebar-item">
+                    <span class="sidebar-icon">✅</span>
+                    <span>Approvals</span>
+                </a>
             </div>
+        </div>
 
-            <table id="requestsTable" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>Account ID</th>
-                        <th>ชื่อ-นามสกุล</th>
-                        <th>Email</th>
-                        <th>LINE ID</th>
-                        <th>วันที่ขอ</th>
-                        <th>สถานะ</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="requestsBody">
-                </tbody>
-            </table>
+        <div class="content">
+            <div class="container">
+                <h1 style="margin-bottom: 20px; color: #333;">📬 License Requests</h1>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="pendingCount">0</div>
+                        <div class="stat-label">⏳ รออนุมัติ</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="approvedCount">0</div>
+                        <div class="stat-label">✅ อนุมัติแล้ว</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="rejectedCount">0</div>
+                        <div class="stat-label">❌ ปฏิเสธแล้ว</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalCount">0</div>
+                        <div class="stat-label">📊 ทั้งหมด</div>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 ค้นหา Account ID, ชื่อ, Email...">
+                    </div>
+                    <div class="filter-select">
+                        <select id="statusFilter">
+                            <option value="all">ทุกสถานะ</option>
+                            <option value="pending" selected>รออนุมัติ</option>
+                            <option value="approved">อนุมัติแล้ว</option>
+                            <option value="rejected">ปฏิเสธแล้ว</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" onclick="loadRequests()">🔄 Refresh</button>
+                </div>
+
+                <div class="requests-table">
+                    <div class="loading" id="loading" style="display: none;">
+                        🔄 กำลังโหลดข้อมูล...
+                    </div>
+                    
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>ไม่มีคำขอ</h3>
+                        <p>ยังไม่มีคำขอ License ในขณะนี้</p>
+                    </div>
+
+                    <table id="requestsTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Account ID</th>
+                                <th>ชื่อ-นามสกุล</th>
+                                <th>Email</th>
+                                <th>เหตุผล</th>
+                                <th>วันที่ขอ</th>
+                                <th>สถานะ</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Approve Modal -->
     <div id="approveModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -392,12 +708,12 @@
                         <div class="days">365</div>
                         <div class="label">วัน (1 ปี)</div>
                     </div>
-                    <div class="day-option" onclick="document.getElementById('customDays').focus()">
+                    <div class="day-option" onclick="showCustomInput()">
                         <div class="days">✏️</div>
                         <div class="label">กำหนดเอง</div>
                     </div>
                 </div>
-                <input type="number" id="customDays" placeholder="หรือระบุจำนวนวัน" min="1" style="display: none;">
+                <input type="number" id="customDays" placeholder="ระบุจำนวนวัน (เช่น 45, 120)" min="1" style="display: none;">
             </div>
 
             <div class="btn-group">
@@ -407,7 +723,6 @@
         </div>
     </div>
 
-    <!-- Reject Modal -->
     <div id="rejectModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -445,13 +760,20 @@
                 return;
             }
             
-            // Get user role (simulate for now, will be from login later)
             userRole = sessionStorage.getItem('userRole') || 'admin';
+            document.getElementById('userName').textContent = sessionStorage.getItem('userName') || 'Admin';
+            
+            const roleBadge = document.getElementById('userRole');
+            roleBadge.textContent = userRole.toUpperCase();
+            roleBadge.className = 'badge badge-' + userRole;
+            
+            if (userRole === 'staff') {
+                document.getElementById('adminSection').style.display = 'none';
+            }
             
             loadRequests();
             loadStats();
             
-            // Search functionality
             document.getElementById('searchInput').addEventListener('input', filterRequests);
             document.getElementById('statusFilter').addEventListener('change', loadRequests);
         };
@@ -528,23 +850,23 @@
                 if (request.status === 'pending') {
                     if (userRole === 'owner' || userRole === 'admin') {
                         actions = `
-                            <button class="btn-success" onclick='showApproveModal(${JSON.stringify(request)})'>✅ อนุมัติ</button>
-                            <button class="btn-danger" onclick='showRejectModal(${JSON.stringify(request)})'>❌ ปฏิเสธ</button>
+                            <button class="btn-success" onclick='showApproveModal(${JSON.stringify(request)})' style="font-size: 12px; padding: 6px 12px;">✅ อนุมัติ</button>
+                            <button class="btn-danger" onclick='showRejectModal(${JSON.stringify(request)})' style="font-size: 12px; padding: 6px 12px;">❌ ปฏิเสธ</button>
                         `;
                     } else {
                         actions = '<span style="color: #999;">รอ Admin อนุมัติ</span>';
                     }
                 } else if (request.status === 'approved') {
-                    actions = `<span style="color: #28a745;">License Key: <code>${request.generated_license_key || 'N/A'}</code></span>`;
+                    actions = `<code style="font-size: 11px;">${request.generated_license_key || 'N/A'}</code>`;
                 } else {
-                    actions = `<span style="color: #dc3545;">เหตุผล: ${request.rejection_reason || 'N/A'}</span>`;
+                    actions = `<span style="color: #dc3545; font-size: 12px;">${request.rejection_reason || 'N/A'}</span>`;
                 }
                 
                 row.innerHTML = `
                     <td><strong>${request.account_id}</strong></td>
                     <td>${request.user_name || 'N/A'}</td>
                     <td>${request.user_email || 'N/A'}</td>
-                    <td>${request.reason || 'N/A'}</td>
+                    <td>${request.reason || '-'}</td>
                     <td>${date}</td>
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                     <td>${actions}</td>
@@ -589,6 +911,13 @@
             document.getElementById('customDays').style.display = 'none';
         }
 
+        function showCustomInput() {
+            const input = document.getElementById('customDays');
+            input.style.display = 'block';
+            input.focus();
+            document.querySelectorAll('.day-option').forEach(el => el.classList.remove('selected'));
+        }
+
         document.getElementById('customDays')?.addEventListener('input', function() {
             selectedDays = parseInt(this.value) || 30;
             document.querySelectorAll('.day-option').forEach(el => el.classList.remove('selected'));
@@ -606,14 +935,11 @@
             }
             
             try {
-                // Generate License Key
                 const licenseKey = generateLicenseKey();
                 
-                // Calculate expiry date
                 const expiryDate = new Date();
                 expiryDate.setDate(expiryDate.getDate() + days);
                 
-                // Create license
                 const { error: licenseError } = await supabase
                     .from('licenses')
                     .insert({
@@ -626,7 +952,6 @@
                 
                 if (licenseError) throw licenseError;
                 
-                // Update request status
                 const { error: updateError } = await supabase
                     .from('license_requests')
                     .update({
@@ -701,6 +1026,19 @@
             document.getElementById(modalId).style.display = 'none';
             currentRequest = null;
         }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        }
+
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
+        });
 
         function logout() {
             if (confirm('ต้องการ Logout ใช่ไหม?')) {
