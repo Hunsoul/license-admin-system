@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Request MT5 License</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .success-message, .error-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .success-message.show, .error-message.show {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group label .required {
+            color: red;
+        }
+        
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box h3 {
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .info-box ul {
+            margin-left: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .info-box ul li {
+            margin-bottom: 5px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            color: #667eea;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">🔑</div>
+            <h1>Request MT5 License</h1>
+            <p>กรอกข้อมูลเพื่อขอใช้งาน License</p>
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            ✅ ส่งคำขอสำเร็จ! ทีมงานจะตรวจสอบและติดต่อกลับภายใน 24 ชั่วโมง
+        </div>
+        
+        <div class="error-message" id="errorMessage">
+            ❌ เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง
+        </div>
+        
+        <div class="info-box">
+            <h3>📋 วิธีหา Account ID ของคุณ:</h3>
+            <ul>
+                <li>เปิด MT5 Terminal</li>
+                <li>คลิกที่ "Tools" → "Options"</li>
+                <li>ดูที่แท็บ "Server"</li>
+                <li>Account ID จะอยู่ในบรรทัด "Login"</li>
+            </ul>
+        </div>
+        
+        <form id="requestForm">
+            <div class="form-group">
+                <label>
+                    🔢 MT5 Account ID <span class="required">*</span>
+                </label>
+                <input 
+                    type="number" 
+                    id="accountId" 
+                    placeholder="เช่น: 12345678" 
+                    required
+                    min="1"
+                >
+                <div class="form-hint">Account ID ของคุณใน MT5 (เลขบัญชี)</div>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    👤 ชื่อ-นามสกุล <span class="required">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="fullName" 
+                    placeholder="เช่น: สมชาย ใจดี" 
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    📧 Email <span class="required">*</span>
+                </label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    placeholder="your.email@example.com" 
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    💬 LINE ID
+                </label>
+                <input 
+                    type="text" 
+                    id="lineId" 
+                    placeholder="@yourlineid"
+                >
+                <div class="form-hint">ไม่บังคับ (ระบุเพื่อความสะดวกในการติดต่อ)</div>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    📱 เบอร์โทรศัพท์
+                </label>
+                <input 
+                    type="tel" 
+                    id="phone" 
+                    placeholder="081-234-5678"
+                >
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    📝 เหตุผลในการขอใช้งาน
+                </label>
+                <textarea 
+                    id="reason" 
+                    placeholder="ระบุเหตุผล หรือข้อมูลเพิ่มเติม (ไม่บังคับ)"
+                ></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">
+                ส่งคำขอ License
+            </button>
+            
+            <div class="loading" id="loading">
+                🔄 กำลังส่งข้อมูล...
+            </div>
+        </form>
+        
+        <div class="footer">
+            MT5 License Management System v2.0
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://qbfhwvpgnbgjapkxrpqc.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.getElementById('requestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Hide messages
+            successMessage.classList.remove('show');
+            errorMessage.classList.remove('show');
+            
+            // Show loading
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            
+            try {
+                const accountId = parseInt(document.getElementById('accountId').value);
+                const fullName = document.getElementById('fullName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const lineId = document.getElementById('lineId').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const requestedDays = 30; // Default 30 days, Admin will decide later
+                const reason = document.getElementById('reason').value.trim();
+                
+                // Check if account already has pending request
+                const { data: existingRequests } = await supabase
+                    .from('license_requests')
+                    .select('*')
+                    .eq('account_id', accountId)
+                    .eq('status', 'pending');
+                
+                if (existingRequests && existingRequests.length > 0) {
+                    throw new Error('Account ID นี้มีคำขอที่รออนุมัติอยู่แล้ว');
+                }
+                
+                // Check if user exists, if not create
+                let userId = null;
+                const { data: existingUser } = await supabase
+                    .from('users')
+                    .select('id')
+                    .eq('account_id', accountId)
+                    .single();
+                
+                if (existingUser) {
+                    userId = existingUser.id;
+                    // Update user info
+                    await supabase
+                        .from('users')
+                        .update({
+                            email: email,
+                            full_name: fullName,
+                            line_id: lineId || null,
+                            phone: phone || null,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('id', userId);
+                } else {
+                    // Create new user
+                    const { data: newUser, error: userError } = await supabase
+                        .from('users')
+                        .insert({
+                            account_id: accountId,
+                            email: email,
+                            full_name: fullName,
+                            line_id: lineId || null,
+                            phone: phone || null,
+                            is_active: true
+                        })
+                        .select()
+                        .single();
+                    
+                    if (userError) throw userError;
+                    userId = newUser.id;
+                }
+                
+                // Create license request
+                const { error: requestError } = await supabase
+                    .from('license_requests')
+                    .insert({
+                        account_id: accountId,
+                        user_id: userId,
+                        user_email: email,
+                        user_name: fullName,
+                        requested_days: requestedDays,
+                        reason: reason || null,
+                        status: 'pending'
+                    });
+                
+                if (requestError) throw requestError;
+                
+                // Success
+                successMessage.classList.add('show');
+                document.getElementById('requestForm').reset();
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = '❌ ' + (error.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+                errorMessage.classList.add('show');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } finally {
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
