@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👔 Team Management - Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            height: 60px;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .logout-btn {
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Layout */
+        .layout {
+            display: flex;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            position: fixed;
+            left: 0;
+            top: 60px;
+            bottom: 0;
+            overflow-y: auto;
+            padding: 20px 0;
+            transition: transform 0.3s;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-section-title {
+            padding: 0 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #999;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-item:hover {
+            background: #f8f9fa;
+            color: #667eea;
+        }
+        
+        .sidebar-item.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
+            color: #667eea;
+            border-left-color: #667eea;
+            font-weight: 600;
+        }
+        
+        .sidebar-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .sidebar-divider {
+            height: 1px;
+            background: #eee;
+            margin: 15px 20px;
+        }
+        
+        /* Content */
+        .content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 30px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-owner {
+            background: #ffd700;
+            color: #000;
+        }
+        
+        .badge-admin {
+            background: #667eea;
+            color: white;
+        }
+        
+        .badge-staff {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 150;
+        }
+        
+        .sidebar-overlay.open {
+            display: block;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .toolbar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            align-items: center;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .team-table {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-header h2 {
+            color: #333;
+        }
+        .close-btn {
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+        .close-btn:hover {
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 200;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .header {
+                padding: 10px 15px;
+            }
+            
+            .logo span {
+                display: none;
+            }
+            
+            .user-info span:not(.badge) {
+                display: none;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-value {
+                font-size: 24px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+            
+            .toolbar {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+        
+        /* Tablet Responsive */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .content {
+                margin-left: 200px;
+                padding: 20px;
+            }
+            
+            .sidebar-item {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            
+            .logo {
+                font-size: 20px;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="logo">
+                🔐 <span>License System</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span>👤</span>
+                <span id="userName">Admin</span>
+                <span id="userRole" class="badge badge-admin">ADMIN</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                🚪 <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="layout">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+        
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Main Menu</div>
+                <a href="dashboard.html" class="sidebar-item">
+                    <span class="sidebar-icon">🏠</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="license_requests.html" class="sidebar-item">
+                    <span class="sidebar-icon">📬</span>
+                    <span>License Requests</span>
+                </a>
+                <a href="licenses.html" class="sidebar-item">
+                    <span class="sidebar-icon">🔑</span>
+                    <span>Licenses</span>
+                </a>
+                <a href="users.html" class="sidebar-item">
+                    <span class="sidebar-icon">👥</span>
+                    <span>Users</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-divider"></div>
+            
+            <div class="sidebar-section" id="adminSection">
+                <div class="sidebar-section-title">Administration</div>
+                <a href="team.html" class="sidebar-item active">
+                    <span class="sidebar-icon">👔</span>
+                    <span>Team Management</span>
+                </a>
+                <a href="approvals.html" class="sidebar-item">
+                    <span class="sidebar-icon">✅</span>
+                    <span>Approvals</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="container">
+                <h1 style="margin-bottom: 20px; color: #333;">👔 Team Management</h1>
+
+                <div class="alert alert-warning" id="permissionAlert" style="display: none;">
+                    ⚠️ <strong>คำเตือน:</strong> คุณไม่มีสิทธิ์เข้าถึงหน้านี้
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="ownerCount">0</div>
+                        <div class="stat-label">👑 Owner</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="adminCount">0</div>
+                        <div class="stat-label">🔧 Admin</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="staffCount">0</div>
+                        <div class="stat-label">👔 Staff</div>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 ค้นหา Email, ชื่อ...">
+                    </div>
+                    <button class="btn-success" onclick="showAddModal()" id="addTeamBtn">➕ Add Team Member</button>
+                    <button class="btn-primary" onclick="loadTeam()">🔄 Refresh</button>
+                </div>
+
+                <div class="team-table">
+                    <div class="loading" id="loading" style="display: none;">
+                        🔄 กำลังโหลดข้อมูล...
+                    </div>
+                    
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <div class="empty-state-icon">👔</div>
+                        <h3>ไม่มี Team Members</h3>
+                    </div>
+
+                    <table id="teamTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>ชื่อ-นามสกุล</th>
+                                <th>Role</th>
+                                <th>สถานะ</th>
+                                <th>สร้างเมื่อ</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teamBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Team Modal -->
+    <div id="teamModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">➕ Add Team Member</h2>
+                <span class="close-btn" onclick="closeModal('teamModal')">&times;</span>
+            </div>
+
+            <form id="teamForm">
+                <div class="form-group">
+                    <label>Email: <span style="color: red;">*</span></label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label>ชื่อ-นามสกุล: <span style="color: red;">*</span></label>
+                    <input type="text" id="fullName" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Role: <span style="color: red;">*</span></label>
+                    <select id="roleSelect" required>
+                        <option value="">เลือก Role</option>
+                        <option value="admin" id="adminOption">Admin</option>
+                        <option value="staff">Staff</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Password: <span style="color: red;">*</span></label>
+                    <input type="password" id="password" required minlength="6">
+                    <small style="color: #666;">ต้องมีอย่างน้อย 6 ตัวอักษร</small>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn-success">💾 บันทึก</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('teamModal')">ยกเลิก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://qbfhwvpgnbgjapkxrpqc.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let userRole = 'staff';
+        let currentUserId = null;
+
+        window.onload = function() {
+            if (!sessionStorage.getItem('isAuthenticated')) {
+                window.location.href = 'admin_login.html';
+                return;
+            }
+            
+            userRole = sessionStorage.getItem('userRole') || 'admin';
+            document.getElementById('userName').textContent = sessionStorage.getItem('userName') || 'Admin';
+            
+            const roleBadge = document.getElementById('userRole');
+            roleBadge.textContent = userRole.toUpperCase();
+            roleBadge.className = 'badge badge-' + userRole;
+            
+            // Check permission
+            if (userRole === 'staff') {
+                document.getElementById('permissionAlert').style.display = 'block';
+                document.getElementById('addTeamBtn').style.display = 'none';
+                document.getElementById('adminSection').style.display = 'none';
+                return;
+            }
+            
+            // Owner can add Admin
+            if (userRole !== 'owner') {
+                document.getElementById('adminOption').style.display = 'none';
+            }
+            
+            loadTeam();
+            loadStats();
+            
+            document.getElementById('searchInput').addEventListener('input', filterTeam);
+            document.getElementById('teamForm').addEventListener('submit', saveTeamMember);
+        };
+
+        async function loadTeam() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('teamTable').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+            
+            try {
+                let query = supabase
+                    .from('admin_users')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                // Admin can only see Staff
+                if (userRole === 'admin') {
+                    query = query.eq('role', 'staff');
+                }
+                
+                const { data: team, error } = await query;
+                
+                if (error) throw error;
+                
+                displayTeam(team);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาด: ' + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const { count: owner } = await supabase.from('admin_users').select('*', { count: 'exact', head: true }).eq('role', 'owner');
+                const { count: admin } = await supabase.from('admin_users').select('*', { count: 'exact', head: true }).eq('role', 'admin');
+                const { count: staff } = await supabase.from('admin_users').select('*', { count: 'exact', head: true }).eq('role', 'staff');
+                
+                document.getElementById('ownerCount').textContent = owner || 0;
+                document.getElementById('adminCount').textContent = admin || 0;
+                document.getElementById('staffCount').textContent = staff || 0;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        function displayTeam(team) {
+            const tbody = document.getElementById('teamBody');
+            tbody.innerHTML = '';
+            
+            if (!team || team.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                return;
+            }
+            
+            document.getElementById('teamTable').style.display = 'table';
+            
+            team.forEach(member => {
+                const row = tbody.insertRow();
+                const statusClass = member.is_active ? 'status-active' : 'status-inactive';
+                const statusText = member.is_active ? '✅ Active' : '❌ Inactive';
+                const roleClass = `badge-${member.role}`;
+                const createdDate = new Date(member.created_at).toLocaleDateString('th-TH');
+                
+                let actions = '';
+                
+                // Owner can edit/delete Admin and Staff
+                if (userRole === 'owner') {
+                    if (member.role !== 'owner') {
+                        actions = `
+                            <div class="btn-group">
+                                <button class="btn-warning" onclick='editMember(${JSON.stringify(member)})' style="font-size: 12px; padding: 6px 12px;">✏️ Edit</button>
+                                <button class="btn-danger" onclick="deleteMember('${member.id}', '${member.email}', '${member.role}')" style="font-size: 12px; padding: 6px 12px;">🗑️ Delete</button>
+                            </div>
+                        `;
+                    } else {
+                        actions = '<span style="color: #999; font-size: 12px;">Protected</span>';
+                    }
+                }
+                // Admin can only edit/delete Staff
+                else if (userRole === 'admin') {
+                    if (member.role === 'staff') {
+                        actions = `
+                            <div class="btn-group">
+                                <button class="btn-warning" onclick='editMember(${JSON.stringify(member)})' style="font-size: 12px; padding: 6px 12px;">✏️ Edit</button>
+                                <button class="btn-danger" onclick="deleteMember('${member.id}', '${member.email}', '${member.role}')" style="font-size: 12px; padding: 6px 12px;">🗑️ Delete</button>
+                            </div>
+                        `;
+                    } else {
+                        actions = '<span style="color: #999; font-size: 12px;">No Permission</span>';
+                    }
+                }
+                
+                row.innerHTML = `
+                    <td>${member.email}</td>
+                    <td>${member.full_name || 'N/A'}</td>
+                    <td><span class="badge ${roleClass}">${member.role.toUpperCase()}</span></td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${createdDate}</td>
+                    <td>${actions}</td>
+                `;
+            });
+        }
+
+        function filterTeam() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#teamBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        function showAddModal() {
+            currentUserId = null;
+            document.getElementById('modalTitle').textContent = '➕ Add Team Member';
+            document.getElementById('teamForm').reset();
+            document.getElementById('email').disabled = false;
+            document.getElementById('password').required = true;
+            document.getElementById('teamModal').style.display = 'flex';
+        }
+
+        function editMember(member) {
+            currentUserId = member.id;
+            document.getElementById('modalTitle').textContent = '✏️ Edit Team Member';
+            document.getElementById('email').value = member.email;
+            document.getElementById('email').disabled = true;
+            document.getElementById('fullName').value = member.full_name || '';
+            document.getElementById('roleSelect').value = member.role;
+            document.getElementById('password').required = false;
+            document.getElementById('password').placeholder = 'เว้นว่างถ้าไม่ต้องการเปลี่ยน';
+            document.getElementById('teamModal').style.display = 'flex';
+        }
+
+        async function saveTeamMember(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const fullName = document.getElementById('fullName').value.trim();
+            const role = document.getElementById('roleSelect').value;
+            const password = document.getElementById('password').value;
+            
+            // Check permission
+            if (role === 'admin' && userRole !== 'owner') {
+                alert('❌ เฉพาะ Owner เท่านั้นที่สามารถเพิ่ม Admin ได้');
+                return;
+            }
+            
+            try {
+                if (currentUserId) {
+                    // Update (without password if not provided)
+                    const updateData = {
+                        full_name: fullName,
+                        role: role,
+                        updated_at: new Date().toISOString()
+                    };
+                    
+                    if (password) {
+                        updateData.password_hash = password; // In production, hash this!
+                    }
+                    
+                    const { error } = await supabase
+                        .from('admin_users')
+                        .update(updateData)
+                        .eq('id', currentUserId);
+                    
+                    if (error) throw error;
+                    alert('✅ อัปเดต Team Member สำเร็จ');
+                } else {
+                    // Insert
+                    const { error } = await supabase
+                        .from('admin_users')
+                        .insert({
+                            email: email,
+                            password_hash: password, // In production, hash this!
+                            full_name: fullName,
+                            role: role,
+                            is_active: true
+                        });
+                    
+                    if (error) throw error;
+                    alert('✅ เพิ่ม Team Member สำเร็จ');
+                }
+                
+                closeModal('teamModal');
+                loadTeam();
+                loadStats();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ เกิดข้อผิดพลาด: ' + error.message);
+            }
+        }
+
+        async function deleteMember(id, email, role) {
+            // Check permission
+            if (role === 'admin' && userRole !== 'owner') {
+                alert('❌ เฉพาะ Owner เท่านั้นที่สามารถลบ Admin ได้');
+                return;
+            }
+            
+            if (!confirm(`ยืนยันการลบ Team Member:\n\n${email}?`)) {
+                return;
+            }
+            
+            try {
+                const { error } = await supabase
+                    .from('admin_users')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                alert('✅ ลบ Team Member สำเร็จ');
+                loadTeam();
+                loadStats();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ เกิดข้อผิดพลาด: ' + error.message);
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.getElementById('email').disabled = false;
+            document.getElementById('password').required = true;
+            document.getElementById('password').placeholder = '';
+            currentUserId = null;
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        }
+
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
+        });
+
+        function logout() {
+            if (confirm('ต้องการ Logout ใช่ไหม?')) {
+                sessionStorage.clear();
+                window.location.href = 'admin_login.html';
+            }
+        }
+    </script>
+</body>
+</html>
