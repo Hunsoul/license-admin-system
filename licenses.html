@@ -191,7 +191,7 @@
 
     <script>
         const SUPABASE_URL = 'https://qbfhwvpgnbgjapkxrpqc.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUxMDk2NjksImV4cCI6MjA1MDY4NTY2OX0.s-f9s4UR4VZnzVQvslZE9y_yp_wnxBbPJMzjXmrpGbY';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
 
         // Check authentication
         window.onload = function() {
@@ -225,6 +225,12 @@
         function displayLicenses(licenses) {
             const tbody = document.getElementById('licensesBody');
             tbody.innerHTML = '';
+            
+            // Check if licenses is valid array
+            if (!licenses || !Array.isArray(licenses) || licenses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">No licenses found</td></tr>';
+                return;
+            }
             
             licenses.forEach(license => {
                 const row = tbody.insertRow();
