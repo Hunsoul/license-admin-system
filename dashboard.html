@@ -258,19 +258,7 @@
                     📊 Dashboard
                 </div>
                 <a href="licenses.html" class="menu-item">
-                    📝 Licenses
-                </a>
-                <a href="users.html" class="menu-item">
-                    👥 Users
-                </a>
-                <a href="approvals.html" class="menu-item">
-                    📬 Approvals
-                 </a>
-                <a href="activity_logs.html" class="menu-item">
-                    📋 Activity Logs
-                </a>
-                <a href="settings.html" class="menu-item">
-                    ⚙️ Settings
+                    🔑 Licenses
                 </a>
             </div>
 
@@ -288,15 +276,12 @@
                         <button class="action-btn" onclick="window.location.href='licenses.html'">
                             📋 View Licenses
                         </button>
-                        <button class="action-btn" onclick="window.location.href='users.html'">
-                            👥 Manage Users
-                        </button>
                     </div>
                 </div>
 
-                <h2>📊 Recent Activity</h2>
+                <h2>📊 System Overview</h2>
                 <p style="color: #999; margin-top: 20px;">
-                    Activity logs will appear here...
+                    Dashboard statistics are displayed above. Click on "Licenses" to manage your license keys.
                 </p>
             </div>
         </div>
@@ -311,20 +296,19 @@
 
         // Check if logged in
         window.addEventListener('DOMContentLoaded', async () => {
-            const user = JSON.parse(localStorage.getItem('user') || 'null');
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const isAuthenticated = sessionStorage.getItem('isAuthenticated');
             
-            if (!isLoggedIn || !user) {
+            if (!isAuthenticated) {
                 alert('⚠️ Please login first!');
                 window.location.href = 'admin_login.html';
                 return;
             }
             
             // Display user info
-            document.getElementById('userName').textContent = user.full_name || user.email;
-            document.getElementById('userRole').textContent = `(${user.role})`;
-            document.getElementById('welcomeName').textContent = user.full_name || user.email;
-            document.getElementById('welcomeRole').textContent = user.role.toUpperCase();
+            document.getElementById('userName').textContent = 'Admin';
+            document.getElementById('userRole').textContent = '(Administrator)';
+            document.getElementById('welcomeName').textContent = 'Admin';
+            document.getElementById('welcomeRole').textContent = 'ADMINISTRATOR';
             
             // Load stats
             await loadStats();
@@ -354,7 +338,7 @@
                     .from('licenses')
                     .select('*', { count: 'exact', head: true })
                     .eq('is_active', true)
-                    .lte('expiry_date', thirtyDaysFromNow.toISOString());
+                    .lte('expires_at', thirtyDaysFromNow.toISOString());
                 document.getElementById('expiringSoon').textContent = expiring || 0;
                 
                 // Total Users
@@ -371,8 +355,7 @@
         // Logout
         function logout() {
             if (confirm('ต้องการ Logout ใช่ไหม?')) {
-                localStorage.removeItem('user');
-                localStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('isAuthenticated');
                 window.location.href = 'admin_login.html';
             }
         }
