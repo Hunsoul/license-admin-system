@@ -1,0 +1,20 @@
+### 1. Test Health Check
+GET https://mt5-license-api-jgvy.onrender.com/api/health
+
+### 2. Test Activate License
+POST https://mt5-license-api-jgvy.onrender.com/api/license/activate
+Content-Type: application/json
+
+{
+  "license_key": "TEST-1234-5678-ABCD",
+  "account_id": 12345678
+}
+
+### 3. Test Verify License
+POST https://mt5-license-api-jgvy.onrender.com/api/license/verify
+Content-Type: application/json
+
+{
+  "license_key": "TEST-1234-5678-ABCD",
+  "account_id": 12345678
+}
