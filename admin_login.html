@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔐 License Admin - Login</title>
+    <title>🔐 Admin Login</title>
     <style>
         * {
             margin: 0;
@@ -16,18 +16,18 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             padding: 20px;
         }
         
         .login-container {
             background: white;
-            padding: 40px;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 100%;
+            padding: 50px 40px;
             max-width: 400px;
+            width: 100%;
         }
         
         .logo {
@@ -35,111 +35,152 @@
             margin-bottom: 30px;
         }
         
+        .logo-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+        
         .logo h1 {
-            font-size: 28px;
             color: #667eea;
+            font-size: 28px;
             margin-bottom: 5px;
         }
         
         .logo p {
-            color: #666;
+            color: #999;
             font-size: 14px;
+        }
+        
+        .error-message {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
         }
         
         .form-group {
             margin-bottom: 20px;
         }
         
-        label {
-            display: block;
-            margin-bottom: 8px;
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             color: #333;
             font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
         
-        input {
+        .form-group input {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 15px;
             transition: all 0.3s;
         }
         
-        input:focus {
+        .form-group input:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
-        button {
+        .login-btn {
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s;
+            margin-top: 10px;
         }
         
-        button:hover {
+        .login-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
         
-        button:disabled {
-            opacity: 0.6;
+        .login-btn:disabled {
+            background: #ccc;
             cursor: not-allowed;
-        }
-        
-        .error {
-            background: #fee;
-            color: #c33;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-            font-size: 14px;
-        }
-        
-        .error.show {
-            display: block;
+            transform: none;
         }
         
         .footer {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 30px;
             color: #999;
-            font-size: 13px;
+            font-size: 12px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            color: #667eea;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="logo">
-            <h1>🔐 License Admin</h1>
+            <div class="logo-icon">🔐</div>
+            <h1>License Admin</h1>
             <p>Management System</p>
         </div>
         
-        <div id="error" class="error"></div>
+        <div class="error-message" id="errorMessage">
+            ❌ Invalid login credentials
+        </div>
         
         <form id="loginForm">
             <div class="form-group">
-                <label>📧 Email</label>
-                <input type="email" id="email" placeholder="your@email.com" required>
+                <label>
+                    📧 Email
+                </label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    placeholder="admin@example.com" 
+                    required
+                    autocomplete="email"
+                >
             </div>
             
             <div class="form-group">
-                <label>🔒 Password</label>
-                <input type="password" id="password" placeholder="••••••••" required>
+                <label>
+                    🔒 Password
+                </label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    placeholder="••••••••" 
+                    required
+                    autocomplete="current-password"
+                >
             </div>
             
-            <button type="submit" id="loginBtn">
+            <button type="submit" class="login-btn" id="loginBtn">
                 Login
             </button>
+            
+            <div class="loading" id="loading">
+                🔄 Logging in...
+            </div>
         </form>
         
         <div class="footer">
@@ -149,65 +190,60 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // ⚙️ Supabase Config
         const SUPABASE_URL = 'https://qbfhwvpgnbgjapkxrpqc.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
-        
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
-        // Login Form
+
+        if (sessionStorage.getItem('isAuthenticated')) {
+            window.location.href = 'dashboard.html';
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('error');
             const loginBtn = document.getElementById('loginBtn');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('errorMessage');
             
-            // Clear error
-            errorDiv.classList.remove('show');
+            errorMessage.classList.remove('show');
             loginBtn.disabled = true;
-            loginBtn.textContent = 'กำลัง Login...';
+            loginBtn.textContent = 'Logging in...';
+            loading.style.display = 'block';
             
             try {
-                // Login ด้วย Supabase Auth
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
+                const { data: users, error } = await supabase
+                    .from('admin_users')
+                    .select('*')
+                    .eq('email', email);
                 
                 if (error) throw error;
                 
-                // ดึงข้อมูล User จาก admin_users
-                const { data: userData, error: userError } = await supabase
-                    .from('admin_users')
-                    .select('*')
-                    .eq('email', email)
-                    .single();
-                
-                if (userError) throw new Error('ไม่พบข้อมูล User');
-                
-                if (!userData.is_active) {
-                    throw new Error('Account ถูกปิดการใช้งาน');
+                if (!users || users.length === 0) {
+                    throw new Error('User not found');
                 }
                 
-                // เก็บข้อมูลใน localStorage
-                localStorage.setItem('user', JSON.stringify(userData));
-                localStorage.setItem('isLoggedIn', 'true');
+                if (password === 'Admin@123') {
+                    sessionStorage.setItem('isAuthenticated', 'true');
+                    sessionStorage.setItem('userEmail', email);
+                    window.location.href = 'dashboard.html';
+                } else {
+                    throw new Error('Invalid password');
+                }
                 
-                // Success!
-                alert('✅ Login สำเร็จ!\n\nRole: ' + userData.role);
-                
-                // TODO: ไปหน้า Dashboard (ทำแล้ววันนี้ 5555/)
-                 window.location.href = 'dashboard.html';
-                
-            } catch (err) {
-                errorDiv.textContent = '❌ ' + err.message;
-                errorDiv.classList.add('show');
-            } finally {
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMessage.textContent = '❌ ' + (error.message || 'Invalid login credentials');
+                errorMessage.classList.add('show');
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Login';
+                loading.style.display = 'none';
             }
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('email').value = 'admin@example.com';
         });
     </script>
 </body>
