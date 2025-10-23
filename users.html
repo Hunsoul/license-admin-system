@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>👥 Users - License Admin</title>
+    <title>👥 Users - Admin</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f7fa;
             min-height: 100vh;
         }
@@ -21,41 +20,56 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px 40px;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            height: 60px;
         }
         
-        .header h1 {
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
             font-size: 24px;
+            font-weight: bold;
             display: flex;
             align-items: center;
             gap: 10px;
         }
         
-        .user-info {
+        .header-right {
             display: flex;
             align-items: center;
             gap: 20px;
         }
         
-        .user-badge {
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
             background: rgba(255,255,255,0.2);
-            padding: 8px 16px;
             border-radius: 20px;
             font-size: 14px;
         }
         
         .logout-btn {
+            padding: 8px 20px;
             background: rgba(255,255,255,0.2);
             border: none;
             color: white;
-            padding: 8px 20px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
             transition: all 0.3s;
         }
         
@@ -63,183 +77,294 @@
             background: rgba(255,255,255,0.3);
         }
         
-        /* Container */
-        .container {
-            max-width: 1400px;
-            margin: 40px auto;
-            padding: 0 40px;
-        }
-        
-        /* Content Grid */
-        .content-grid {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            gap: 30px;
+        /* Layout */
+        .layout {
+            display: flex;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
         }
         
         /* Sidebar */
         .sidebar {
+            width: 250px;
             background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            height: fit-content;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            position: fixed;
+            left: 0;
+            top: 60px;
+            bottom: 0;
+            overflow-y: auto;
+            padding: 20px 0;
+            transition: transform 0.3s;
         }
         
-        .menu-item {
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-section-title {
+            padding: 0 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #999;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .sidebar-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
+            gap: 12px;
+            padding: 12px 20px;
             color: #666;
             text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
         }
         
-        .menu-item:hover {
-            background: #f0f0f0;
+        .sidebar-item:hover {
+            background: #f8f9fa;
             color: #667eea;
         }
         
-        .menu-item.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .sidebar-item.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
+            color: #667eea;
+            border-left-color: #667eea;
+            font-weight: 600;
+        }
+        
+        .sidebar-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .sidebar-divider {
+            height: 1px;
+            background: #eee;
+            margin: 15px 20px;
         }
         
         /* Content */
         .content {
-            background: white;
-            border-radius: 16px;
+            flex: 1;
+            margin-left: 250px;
             padding: 30px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
         }
         
-        .content-header h2 {
-            color: #333;
-        }
-        
-        .create-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .create-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-        
-        /* User Cards */
-        .user-cards {
-            display: grid;
-            gap: 20px;
-        }
-        
-        .user-card {
-            background: #f8f9fa;
+        .badge {
+            padding: 4px 10px;
             border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
         
-        .user-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        .user-info-card {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-        }
-        
-        .user-details h3 {
-            color: #333;
-            margin-bottom: 5px;
-        }
-        
-        .user-details p {
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .role-badge {
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 500;
-            margin-left: 10px;
-        }
-        
-        .role-owner {
+        .badge-owner {
             background: #ffd700;
-            color: #7d6608;
+            color: #000;
         }
         
-        .role-admin {
-            background: #e3f2fd;
-            color: #1565c0;
+        .badge-admin {
+            background: #667eea;
+            color: white;
         }
         
-        .role-staff {
-            background: #f3e5f5;
-            color: #6a1b9a;
+        .badge-staff {
+            background: #6c757d;
+            color: white;
         }
         
-        .user-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .action-btn {
+        .mobile-menu-btn {
+            display: none;
             background: none;
             border: none;
+            color: white;
+            font-size: 24px;
             cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 6px;
+        }
+        
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 150;
+        }
+        
+        .sidebar-overlay.open {
+            display: block;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
             transition: all 0.3s;
-            font-size: 16px;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
         }
         
-        .action-btn:hover {
-            background: #e0e0e0;
+        .toolbar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            align-items: center;
         }
         
-        /* Modal */
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .users-table {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
         .modal {
             display: none;
             position: fixed;
@@ -248,216 +373,300 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-        
-        .modal.show {
-            display: flex;
-        }
-        
         .modal-content {
             background: white;
             padding: 30px;
-            border-radius: 16px;
+            border-radius: 15px;
+            max-width: 600px;
             width: 90%;
-            max-width: 500px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-height: 90vh;
+            overflow-y: auto;
         }
-        
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
-        
-        .modal-header h3 {
+        .modal-header h2 {
             color: #333;
         }
-        
         .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
             color: #999;
         }
-        
+        .close-btn:hover {
+            color: #333;
+        }
         .form-group {
             margin-bottom: 20px;
         }
-        
         .form-group label {
             display: block;
             margin-bottom: 8px;
+            font-weight: 600;
             color: #333;
-            font-weight: 500;
         }
-        
-        .form-group input,
-        .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
         }
         
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 200;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .header {
+                padding: 10px 15px;
+            }
+            
+            .logo span {
+                display: none;
+            }
+            
+            .user-info span:not(.badge) {
+                display: none;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-value {
+                font-size: 24px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+            
+            .toolbar {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
         }
         
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-        
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-        
-        .btn-secondary {
-            background: #e0e0e0;
-            color: #666;
-        }
-        
-        .btn-secondary:hover {
-            background: #d0d0d0;
-        }
-        
-        .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .alert-info {
-            background: #e3f2fd;
-            color: #1565c0;
-            border-left: 4px solid #1565c0;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #999;
+        /* Tablet Responsive */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .content {
+                margin-left: 200px;
+                padding: 20px;
+            }
+            
+            .sidebar-item {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            
+            .logo {
+                font-size: 20px;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="header">
-        <h1>🔐 License Admin Dashboard</h1>
-        <div class="user-info">
-            <div class="user-badge" id="userBadge">
-                👤 <span id="userName">Loading...</span>
+        <div class="header-left">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="logo">
+                🔐 <span>License System</span>
             </div>
-            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span>👤</span>
+                <span id="userName">Admin</span>
+                <span id="userRole" class="badge badge-admin">ADMIN</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                🚪 <span>Logout</span>
+            </button>
         </div>
     </div>
 
-    <!-- Main Container -->
-    <div class="container">
-        <div class="content-grid">
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <a href="dashboard.html" class="menu-item">
-                    📊 Dashboard
+    <div class="layout">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+        
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Main Menu</div>
+                <a href="dashboard.html" class="sidebar-item">
+                    <span class="sidebar-icon">🏠</span>
+                    <span>Dashboard</span>
                 </a>
-                <a href="licenses.html" class="menu-item">
-                    📝 Licenses
+                <a href="license_requests.html" class="sidebar-item">
+                    <span class="sidebar-icon">📬</span>
+                    <span>License Requests</span>
                 </a>
-                <div class="menu-item active">
-                    👥 Users
-                </div>
-                <a href="approvals.html" class="menu-item">
-                   📬 Approvals
+                <a href="licenses.html" class="sidebar-item">
+                    <span class="sidebar-icon">🔑</span>
+                    <span>Licenses</span>
                 </a>
-                <a href="activity_logs.html" class="menu-item">
-                    📋 Activity Logs
+                <a href="users.html" class="sidebar-item active">
+                    <span class="sidebar-icon">👥</span>
+                    <span>Users</span>
                 </a>
-                <a href="settings.html" class="menu-item">
-                    ⚙️ Settings
-                </a>
-            </div>
-
-            <!-- Main Content -->
-            <div class="content">
-                <div class="content-header">
-                    <h2>👥 User Management</h2>
-                    <button class="create-btn" onclick="openInviteModal()" id="inviteBtn">
-                        ➕ Invite User
-                    </button>
-                </div>
-
-                <div class="alert alert-info">
-                    ℹ️ Only Owner can manage users. Invited users will receive an email with login credentials.
-                </div>
-
-                <!-- User Cards -->
-                <div class="user-cards" id="userCards">
-                    <div class="loading">Loading users...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Invite Modal -->
-    <div id="inviteModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>➕ Invite New User</h3>
-                <button class="close-btn" onclick="closeModal()">×</button>
             </div>
             
-            <form id="inviteForm" onsubmit="inviteUser(event)">
+            <div class="sidebar-divider"></div>
+            
+            <div class="sidebar-section" id="adminSection">
+                <div class="sidebar-section-title">Administration</div>
+                <a href="team.html" class="sidebar-item">
+                    <span class="sidebar-icon">👔</span>
+                    <span>Team Management</span>
+                </a>
+                <a href="approvals.html" class="sidebar-item">
+                    <span class="sidebar-icon">✅</span>
+                    <span>Approvals</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="container">
+                <h1 style="margin-bottom: 20px; color: #333;">👥 Users Management</h1>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalUsers">0</div>
+                        <div class="stat-label">👥 Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="activeUsers">0</div>
+                        <div class="stat-label">✅ Active Users</div>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 ค้นหา Account ID, ชื่อ, Email...">
+                    </div>
+                    <button class="btn-success" onclick="showAddModal()" id="addUserBtn">➕ Add User</button>
+                    <button class="btn-primary" onclick="loadUsers()">🔄 Refresh</button>
+                </div>
+
+                <div class="users-table">
+                    <div class="loading" id="loading" style="display: none;">
+                        🔄 กำลังโหลดข้อมูล...
+                    </div>
+                    
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <div class="empty-state-icon">👥</div>
+                        <h3>ไม่มี Users</h3>
+                        <p>ยังไม่มีลูกค้าในระบบ</p>
+                    </div>
+
+                    <table id="usersTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Account ID</th>
+                                <th>ชื่อ-นามสกุล</th>
+                                <th>Email</th>
+                                <th>LINE ID</th>
+                                <th>เบอร์โทร</th>
+                                <th>สถานะ</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">➕ Add User</h2>
+                <span class="close-btn" onclick="closeModal('userModal')">&times;</span>
+            </div>
+
+            <form id="userForm">
                 <div class="form-group">
-                    <label>Email *</label>
-                    <input type="email" id="userEmail" placeholder="user@company.com" required>
+                    <label>Account ID: <span style="color: red;">*</span></label>
+                    <input type="number" id="accountId" required min="1">
                 </div>
-                
+
                 <div class="form-group">
-                    <label>Full Name *</label>
-                    <input type="text" id="userFullName" placeholder="John Doe" required>
+                    <label>ชื่อ-นามสกุล: <span style="color: red;">*</span></label>
+                    <input type="text" id="fullName" required>
                 </div>
-                
+
                 <div class="form-group">
-                    <label>Role *</label>
-                    <select id="userRole" required>
-                        <option value="">-- Select Role --</option>
-                        <option value="admin">⚙️ Admin (Can manage licenses)</option>
-                        <option value="staff">📝 Staff (Can create licenses only)</option>
-                    </select>
+                    <label>Email:</label>
+                    <input type="email" id="email">
                 </div>
-                
-                <div class="alert alert-info" style="font-size: 13px;">
-                    💡 A temporary password will be generated and shown after creation.
+
+                <div class="form-group">
+                    <label>LINE ID:</label>
+                    <input type="text" id="lineId">
                 </div>
-                
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Send Invitation</button>
+
+                <div class="form-group">
+                    <label>เบอร์โทรศัพท์:</label>
+                    <input type="tel" id="phone">
+                </div>
+
+                <div class="form-group">
+                    <label>หมายเหตุ:</label>
+                    <textarea id="notes"></textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn-success">💾 บันทึก</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('userModal')">ยกเลิก</button>
                 </div>
             </form>
         </div>
@@ -469,204 +678,238 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let currentUser = null;
+        let userRole = 'staff';
+        let currentUserId = null;
 
-        // Check login
-        window.addEventListener('DOMContentLoaded', async () => {
-            const user = JSON.parse(localStorage.getItem('user') || 'null');
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            
-            if (!isLoggedIn || !user) {
-                alert('⚠️ Please login first!');
+        window.onload = function() {
+            if (!sessionStorage.getItem('isAuthenticated')) {
                 window.location.href = 'admin_login.html';
                 return;
             }
             
-            currentUser = user;
-            document.getElementById('userName').textContent = user.full_name || user.email;
+            userRole = sessionStorage.getItem('userRole') || 'admin';
+            document.getElementById('userName').textContent = sessionStorage.getItem('userName') || 'Admin';
             
-            // Check if Owner
-            if (user.role !== 'owner') {
-                document.getElementById('inviteBtn').style.display = 'none';
-                document.querySelector('.alert-info').textContent = 
-                    '⚠️ Only Owner can manage users.';
+            const roleBadge = document.getElementById('userRole');
+            roleBadge.textContent = userRole.toUpperCase();
+            roleBadge.className = 'badge badge-' + userRole;
+            
+            if (userRole === 'staff') {
+                document.getElementById('adminSection').style.display = 'none';
             }
             
-            await loadUsers();
+            loadUsers();
+            loadStats();
+            
+            document.getElementById('searchInput').addEventListener('input', filterUsers);
+            document.getElementById('userForm').addEventListener('submit', saveUser);
+        };
+
+        async function loadUsers() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('usersTable').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+            
+            try {
+                const { data: users, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                displayUsers(users);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาด: ' + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const { count: total } = await supabase.from('users').select('*', { count: 'exact', head: true });
+                const { count: active } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('is_active', true);
+                
+                document.getElementById('totalUsers').textContent = total || 0;
+                document.getElementById('activeUsers').textContent = active || 0;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersBody');
+            tbody.innerHTML = '';
+            
+            if (!users || users.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                return;
+            }
+            
+            document.getElementById('usersTable').style.display = 'table';
+            
+            users.forEach(user => {
+                const row = tbody.insertRow();
+                const statusClass = user.is_active ? 'status-active' : 'status-inactive';
+                const statusText = user.is_active ? '✅ Active' : '❌ Inactive';
+                
+                let actions = '';
+                if (userRole === 'owner' || userRole === 'admin') {
+                    actions = `
+                        <div class="btn-group">
+                            <button class="btn-warning" onclick='editUser(${JSON.stringify(user)})' style="font-size: 12px; padding: 6px 12px;">✏️ Edit</button>
+                            <button class="btn-danger" onclick="deleteUser('${user.id}', '${user.full_name}')" style="font-size: 12px; padding: 6px 12px;">🗑️ Delete</button>
+                        </div>
+                    `;
+                } else {
+                    // Staff can edit but not delete
+                    actions = `
+                        <div class="btn-group">
+                            <button class="btn-warning" onclick='editUser(${JSON.stringify(user)})' style="font-size: 12px; padding: 6px 12px;">✏️ Edit</button>
+                            <button class="btn-secondary" onclick="requestDelete('${user.id}', '${user.full_name}')" style="font-size: 12px; padding: 6px 12px;">📨 Request Delete</button>
+                        </div>
+                    `;
+                }
+                
+                row.innerHTML = `
+                    <td><strong>${user.account_id}</strong></td>
+                    <td>${user.full_name || 'N/A'}</td>
+                    <td>${user.email || 'N/A'}</td>
+                    <td>${user.line_id || '-'}</td>
+                    <td>${user.phone || '-'}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${actions}</td>
+                `;
+            });
+        }
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#usersBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        function showAddModal() {
+            currentUserId = null;
+            document.getElementById('modalTitle').textContent = '➕ Add User';
+            document.getElementById('userForm').reset();
+            document.getElementById('userModal').style.display = 'flex';
+        }
+
+        function editUser(user) {
+            currentUserId = user.id;
+            document.getElementById('modalTitle').textContent = '✏️ Edit User';
+            document.getElementById('accountId').value = user.account_id;
+            document.getElementById('fullName').value = user.full_name || '';
+            document.getElementById('email').value = user.email || '';
+            document.getElementById('lineId').value = user.line_id || '';
+            document.getElementById('phone').value = user.phone || '';
+            document.getElementById('notes').value = user.notes || '';
+            document.getElementById('accountId').disabled = true; // ไม่ให้แก้ไข Account ID
+            document.getElementById('userModal').style.display = 'flex';
+        }
+
+        async function saveUser(e) {
+            e.preventDefault();
+            
+            const userData = {
+                account_id: parseInt(document.getElementById('accountId').value),
+                full_name: document.getElementById('fullName').value.trim(),
+                email: document.getElementById('email').value.trim() || null,
+                line_id: document.getElementById('lineId').value.trim() || null,
+                phone: document.getElementById('phone').value.trim() || null,
+                notes: document.getElementById('notes').value.trim() || null
+            };
+            
+            try {
+                if (currentUserId) {
+                    // Update
+                    const { error } = await supabase
+                        .from('users')
+                        .update({
+                            ...userData,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('id', currentUserId);
+                    
+                    if (error) throw error;
+                    alert('✅ อัปเดต User สำเร็จ');
+                } else {
+                    // Insert
+                    const { error } = await supabase
+                        .from('users')
+                        .insert(userData);
+                    
+                    if (error) throw error;
+                    alert('✅ เพิ่ม User สำเร็จ');
+                }
+                
+                closeModal('userModal');
+                loadUsers();
+                loadStats();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ เกิดข้อผิดพลาด: ' + error.message);
+            }
+        }
+
+        async function deleteUser(id, name) {
+            if (!confirm(`ยืนยันการลบ User:\n\n${name}?`)) {
+                return;
+            }
+            
+            try {
+                const { error } = await supabase
+                    .from('users')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                alert('✅ ลบ User สำเร็จ');
+                loadUsers();
+                loadStats();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ เกิดข้อผิดพลาด: ' + error.message);
+            }
+        }
+
+        function requestDelete(id, name) {
+            alert(`📨 Request Delete สำหรับ:\n\n${name}\n\nฟีเจอร์นี้จะพัฒนาในเวอร์ชันถัดไป\n(จะส่งคำขอไปให้ Admin อนุมัติ)`);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.getElementById('accountId').disabled = false;
+            currentUserId = null;
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        }
+
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
         });
 
-        // Load Users
-        async function loadUsers() {
-            try {
-                const { data, error } = await supabase
-                    .from('admin_users')
-                    .select('*')
-                    .order('role_level', { ascending: false });
-                
-                if (error) throw error;
-                
-                displayUsers(data || []);
-                
-            } catch (error) {
-                console.error('Error loading users:', error);
-                document.getElementById('userCards').innerHTML = 
-                    '<div style="text-align:center;color:red;">Error loading users</div>';
-            }
-        }
-
-        // Display Users
-        function displayUsers(users) {
-            const container = document.getElementById('userCards');
-            
-            if (users.length === 0) {
-                container.innerHTML = '<div class="loading">No users found</div>';
-                return;
-            }
-            
-            container.innerHTML = users.map(user => {
-                const roleIcons = {
-                    'owner': '👑',
-                    'admin': '⚙️',
-                    'staff': '📝'
-                };
-                
-                const roleClass = `role-${user.role}`;
-                const canDelete = currentUser.role === 'owner' && user.role !== 'owner';
-                
-                return `
-                    <div class="user-card">
-                        <div class="user-info-card">
-                            <div class="user-avatar">${roleIcons[user.role] || '👤'}</div>
-                            <div class="user-details">
-                                <h3>
-                                    ${user.full_name || user.email}
-                                    <span class="role-badge ${roleClass}">${user.role.toUpperCase()}</span>
-                                </h3>
-                                <p>📧 ${user.email}</p>
-                            </div>
-                        </div>
-                        <div class="user-actions">
-                            ${canDelete ? `
-                                <button class="action-btn" onclick="changeRole('${user.email}')" title="Change Role">
-                                    🔄
-                                </button>
-                                <button class="action-btn" onclick="deactivateUser('${user.email}')" title="Deactivate">
-                                    ${user.is_active ? '🔒' : '🔓'}
-                                </button>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Open Invite Modal
-        function openInviteModal() {
-            if (currentUser.role !== 'owner') {
-                alert('⚠️ Only Owner can invite users!');
-                return;
-            }
-            document.getElementById('inviteModal').classList.add('show');
-        }
-
-        // Close Modal
-        function closeModal() {
-            document.getElementById('inviteModal').classList.remove('show');
-            document.getElementById('inviteForm').reset();
-        }
-
-        // Invite User
-        async function inviteUser(event) {
-            event.preventDefault();
-            
-            const email = document.getElementById('userEmail').value;
-            const fullName = document.getElementById('userFullName').value;
-            const role = document.getElementById('userRole').value;
-            
-            // Generate temp password
-            const tempPassword = 'Temp' + Math.random().toString(36).substr(2, 8) + '!';
-            
-            try {
-                // Note: In production, use Supabase Admin API to create user
-                // For now, just add to admin_users table
-                const roleLevel = role === 'admin' ? 2 : 1;
-                
-                const { error } = await supabase
-                    .from('admin_users')
-                    .insert([{
-                        email: email,
-                        full_name: fullName,
-                        role: role,
-                        role_level: roleLevel,
-                        is_active: true,
-                        created_by_email: currentUser.email
-                    }]);
-                
-                if (error) throw error;
-                
-                alert(`✅ User invited successfully!\n\nEmail: ${email}\nTemporary Password: ${tempPassword}\n\n⚠️ Send this password to the user securely!\n\nNote: User must be created in Supabase Auth manually for now.`);
-                
-                closeModal();
-                await loadUsers();
-                
-            } catch (error) {
-                console.error('Error inviting user:', error);
-                alert('❌ Error: ' + error.message);
-            }
-        }
-
-        // Change Role
-        async function changeRole(email) {
-            const newRole = prompt('Enter new role (admin/staff):');
-            if (!newRole || !['admin', 'staff'].includes(newRole)) {
-                return;
-            }
-            
-            try {
-                const roleLevel = newRole === 'admin' ? 2 : 1;
-                
-                const { error } = await supabase
-                    .from('admin_users')
-                    .update({ role: newRole, role_level: roleLevel })
-                    .eq('email', email);
-                
-                if (error) throw error;
-                
-                alert('✅ Role changed successfully!');
-                await loadUsers();
-                
-            } catch (error) {
-                alert('❌ Error: ' + error.message);
-            }
-        }
-
-        // Deactivate User
-        async function deactivateUser(email) {
-            if (!confirm(`⚠️ Deactivate user ${email}?`)) {
-                return;
-            }
-            
-            try {
-                const { error } = await supabase
-                    .from('admin_users')
-                    .update({ is_active: false })
-                    .eq('email', email);
-                
-                if (error) throw error;
-                
-                alert('✅ User deactivated!');
-                await loadUsers();
-                
-            } catch (error) {
-                alert('❌ Error: ' + error.message);
-            }
-        }
-
-        // Logout
         function logout() {
             if (confirm('ต้องการ Logout ใช่ไหม?')) {
-                localStorage.removeItem('user');
-                localStorage.removeItem('isLoggedIn');
+                sessionStorage.clear();
                 window.location.href = 'admin_login.html';
             }
         }
