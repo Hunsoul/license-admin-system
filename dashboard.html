@@ -137,6 +137,23 @@
             font-weight: 600;
         }
         
+        .notification-badge {
+            position: absolute;
+            right: 15px;
+            background: #dc3545;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .sidebar-item {
+            position: relative;
+        }
+        
         .sidebar-icon {
             font-size: 20px;
             width: 24px;
@@ -415,6 +432,7 @@
                 <a href="license_requests.html" class="sidebar-item">
                     <span class="sidebar-icon">📬</span>
                     <span>License Requests</span>
+                    <span class="notification-badge" id="requestsBadge" style="display: none;"></span>
                 </a>
                 <a href="licenses.html" class="sidebar-item">
                     <span class="sidebar-icon">🔑</span>
@@ -498,6 +516,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="notification.js"></script>
     <script>
         const SUPABASE_URL = 'https://qbfhwvpgnbgjapkxrpqc.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
@@ -523,6 +542,11 @@
             }
             
             await loadStats();
+            
+            // 🔔 Initialize notification system
+            NotificationSystem.init(supabase);
+            await NotificationSystem.updateAllBadges();
+            NotificationSystem.startAutoRefresh(30000); // Refresh every 30 seconds
         });
 
         async function loadStats() {

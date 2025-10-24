@@ -3,144 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚙️ Settings - License Admin</title>
+    <title>⚙️ Settings - Admin</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f7fa;
             min-height: 100vh;
         }
         
+        /* Header */
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px 40px;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            height: 60px;
         }
         
-        .header h1 {
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
             font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        .user-badge {
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
             background: rgba(255,255,255,0.2);
-            padding: 8px 16px;
             border-radius: 20px;
             font-size: 14px;
         }
         
         .logout-btn {
+            padding: 8px 20px;
             background: rgba(255,255,255,0.2);
             border: none;
             color: white;
-            padding: 8px 20px;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
         }
         
-        .container {
-            max-width: 1400px;
-            margin: 40px auto;
-            padding: 0 40px;
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
         }
         
-        .content-grid {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            gap: 30px;
+        /* Layout */
+        .layout {
+            display: flex;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
         }
         
+        /* Sidebar */
         .sidebar {
+            width: 250px;
             background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            height: fit-content;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            position: fixed;
+            left: 0;
+            top: 60px;
+            bottom: 0;
+            overflow-y: auto;
+            padding: 20px 0;
+            transition: transform 0.3s;
         }
         
-        .menu-item {
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-section-title {
+            padding: 0 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #999;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .sidebar-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
+            gap: 12px;
+            padding: 12px 20px;
             color: #666;
             text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
         }
         
-        .menu-item:hover {
-            background: #f0f0f0;
+        .sidebar-item:hover {
+            background: #f8f9fa;
             color: #667eea;
         }
         
-        .menu-item.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .sidebar-item.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
+            color: #667eea;
+            border-left-color: #667eea;
+            font-weight: 600;
+        }
+        
+        .sidebar-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .sidebar-divider {
+            height: 1px;
+            background: #eee;
+            margin: 15px 20px;
+        }
+        
+        /* Content */
+        .content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 30px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-owner {
+            background: #ffd700;
+            color: #000;
+        }
+        
+        .badge-admin {
+            background: #667eea;
             color: white;
         }
         
-        .content {
-            background: white;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        .badge-staff {
+            background: #6c757d;
+            color: white;
         }
         
-        .content h2 {
-            margin-bottom: 20px;
-            color: #333;
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 150;
+        }
+        
+        .sidebar-overlay.open {
+            display: block;
         }
         
         .settings-section {
-            margin-bottom: 40px;
-            padding-bottom: 30px;
-            border-bottom: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
-        .settings-section:last-child {
-            border-bottom: none;
-        }
-        
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
+        .settings-section h2 {
             color: #333;
             margin-bottom: 20px;
+            font-size: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-        
-        .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-        
-        .setting-info h4 {
-            color: #333;
-            margin-bottom: 5px;
-        }
-        
-        .setting-info p {
-            color: #666;
-            font-size: 14px;
         }
         
         .form-group {
@@ -150,40 +231,42 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
+            font-weight: 600;
             color: #333;
-            font-weight: 500;
+            font-size: 14px;
         }
         
         .form-group input {
             width: 100%;
-            max-width: 400px;
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 15px;
+            font-size: 14px;
         }
         
         .form-group input:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
-        .btn {
+        button {
             padding: 12px 24px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
+            font-size: 14px;
+            font-weight: 600;
             transition: all 0.3s;
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             color: white;
         }
         
         .btn-primary:hover {
+            background: #5568d3;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
@@ -195,171 +278,230 @@
         
         .btn-danger:hover {
             background: #c82333;
-            transform: translateY(-2px);
         }
         
-        .info-card {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
         }
         
-        .info-card h4 {
-            color: #1565c0;
-            margin-bottom: 5px;
-        }
-        
-        .info-card p {
-            color: #0d47a1;
-            font-size: 14px;
-        }
-        
-        .system-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        
-        .info-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
+        .info-row:last-child {
+            border-bottom: none;
         }
         
         .info-label {
-            font-size: 13px;
             color: #666;
-            margin-bottom: 5px;
+            font-weight: 600;
         }
         
         .info-value {
-            font-size: 16px;
-            font-weight: 600;
             color: #333;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 200;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .header {
+                padding: 10px 15px;
+            }
+            
+            .logo span {
+                display: none;
+            }
+            
+            .user-info span:not(.badge) {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🔐 License Admin Dashboard</h1>
-        <div style="display: flex; gap: 20px; align-items: center;">
-            <div class="user-badge">
-                👤 <span id="userName">Loading...</span>
+        <div class="header-left">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="logo">
+                🔐 <span>License System</span>
             </div>
-            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span>👤</span>
+                <span id="userName">Admin</span>
+                <span id="userRole" class="badge badge-admin">ADMIN</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                🚪 <span>Logout</span>
+            </button>
         </div>
     </div>
 
-    <div class="container">
-        <div class="content-grid">
-            <div class="sidebar">
-                <a href="dashboard.html" class="menu-item">📊 Dashboard</a>
-                <a href="licenses.html" class="menu-item">📝 Licenses</a>
-                <a href="users.html" class="menu-item">👥 Users</a>
-                <a href="approvals.html" class="menu-item">📬 Approvals</a>
-                <a href="activity_logs.html" class="menu-item">📋 Activity Logs</a>
-                <div class="menu-item active">⚙️ Settings</div>
+    <div class="layout">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+        
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Main Menu</div>
+                <a href="dashboard.html" class="sidebar-item">
+                    <span class="sidebar-icon">🏠</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="license_requests.html" class="sidebar-item">
+                    <span class="sidebar-icon">📬</span>
+                    <span>License Requests</span>
+                </a>
+                <a href="licenses.html" class="sidebar-item">
+                    <span class="sidebar-icon">🔑</span>
+                    <span>Licenses</span>
+                </a>
+                <a href="users.html" class="sidebar-item">
+                    <span class="sidebar-icon">👥</span>
+                    <span>Users</span>
+                </a>
             </div>
+            
+            <div class="sidebar-divider"></div>
+            
+            <div class="sidebar-section" id="adminSection">
+                <div class="sidebar-section-title">Administration</div>
+                <a href="team.html" class="sidebar-item">
+                    <span class="sidebar-icon">👔</span>
+                    <span>Team Management</span>
+                </a>
+                <a href="approvals.html" class="sidebar-item">
+                    <span class="sidebar-icon">✅</span>
+                    <span>Approvals</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-divider"></div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Account</div>
+                <a href="settings.html" class="sidebar-item active">
+                    <span class="sidebar-icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </div>
 
-            <div class="content">
-                <h2>⚙️ Settings</h2>
+        <div class="content">
+            <div class="container">
+                <h1 style="margin-bottom: 20px; color: #333;">⚙️ Settings</h1>
 
-                <!-- Profile Section -->
+                <!-- Account Information -->
                 <div class="settings-section">
-                    <div class="section-title">👤 Profile Settings</div>
+                    <h2>👤 Account Information</h2>
+                    <div class="info-row">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value" id="accountEmail">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Full Name:</span>
+                        <span class="info-value" id="accountName">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Role:</span>
+                        <span class="info-value" id="accountRole">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Account ID:</span>
+                        <span class="info-value" id="accountId">-</span>
+                    </div>
+                </div>
+
+                <!-- Change Password -->
+                <div class="settings-section">
+                    <h2>🔒 Change Password</h2>
                     
-                    <div class="info-card">
-                        <h4>Account Information</h4>
-                        <p id="accountInfo">Loading...</p>
+                    <div class="success-message" id="passwordSuccess">
+                        ✅ Password changed successfully!
                     </div>
-
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="fullName" placeholder="Your full name">
+                    
+                    <div class="error-message" id="passwordError">
+                        ❌ Error changing password
                     </div>
-
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="email" readonly style="background: #f0f0f0;">
-                    </div>
-
-                    <button class="btn btn-primary" onclick="updateProfile()">
-                        💾 Save Profile
-                    </button>
-                </div>
-
-                <!-- Password Section -->
-                <div class="settings-section">
-                    <div class="section-title">🔒 Change Password</div>
-
-                    <div class="form-group">
-                        <label>Current Password</label>
-                        <input type="password" id="currentPassword" placeholder="Enter current password">
-                    </div>
-
-                    <div class="form-group">
-                        <label>New Password</label>
-                        <input type="password" id="newPassword" placeholder="Enter new password">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Confirm New Password</label>
-                        <input type="password" id="confirmPassword" placeholder="Confirm new password">
-                    </div>
-
-                    <button class="btn btn-primary" onclick="changePassword()">
-                        🔐 Change Password
-                    </button>
-                </div>
-
-                <!-- System Info Section -->
-                <div class="settings-section">
-                    <div class="section-title">📊 System Information</div>
-
-                    <div class="system-info">
-                        <div class="info-item">
-                            <div class="info-label">Version</div>
-                            <div class="info-value">1.0.0</div>
+                    
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label>Current Password:</label>
+                            <input type="password" id="currentPassword" required minlength="6">
                         </div>
-                        <div class="info-item">
-                            <div class="info-label">Database</div>
-                            <div class="info-value">Supabase</div>
+                        
+                        <div class="form-group">
+                            <label>New Password:</label>
+                            <input type="password" id="newPassword" required minlength="6">
                         </div>
-                        <div class="info-item">
-                            <div class="info-label">Total Licenses</div>
-                            <div class="info-value" id="totalLicenses">0</div>
+                        
+                        <div class="form-group">
+                            <label>Confirm New Password:</label>
+                            <input type="password" id="confirmPassword" required minlength="6">
                         </div>
-                        <div class="info-item">
-                            <div class="info-label">Total Users</div>
-                            <div class="info-value" id="totalUsers">0</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Danger Zone -->
-                <div class="settings-section">
-                    <div class="section-title" style="color: #dc3545;">⚠️ Danger Zone</div>
-
-                    <div class="setting-item" style="background: #f8d7da;">
-                        <div class="setting-info">
-                            <h4 style="color: #721c24;">Clear All Activity Logs</h4>
-                            <p style="color: #721c24;">Permanently delete all activity logs (not recommended)</p>
-                        </div>
-                        <button class="btn btn-danger" onclick="clearLogs()">
-                            🗑️ Clear Logs
+                        
+                        <button type="submit" class="btn-primary">
+                            💾 Change Password
                         </button>
-                    </div>
+                    </form>
+                </div>
 
-                    <div class="setting-item" style="background: #f8d7da; margin-top: 15px;">
-                        <div class="setting-info">
-                            <h4 style="color: #721c24;">Delete Account</h4>
-                            <p style="color: #721c24;">Permanently delete your account (cannot be undone)</p>
-                        </div>
-                        <button class="btn btn-danger" onclick="deleteAccount()">
-                            ⛔ Delete Account
-                        </button>
+                <!-- System Info -->
+                <div class="settings-section">
+                    <h2>ℹ️ System Information</h2>
+                    <div class="info-row">
+                        <span class="info-label">Version:</span>
+                        <span class="info-value">1.0.0</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Security:</span>
+                        <span class="info-value">SHA-256 Password Hashing</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Last Login:</span>
+                        <span class="info-value" id="lastLogin">-</span>
                     </div>
                 </div>
             </div>
@@ -372,118 +514,155 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let currentUser = null;
+        let userRole = 'staff';
+        let userId = null;
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            const user = JSON.parse(localStorage.getItem('user') || 'null');
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            
-            if (!isLoggedIn || !user) {
-                alert('⚠️ Please login first!');
+        // Password hashing function
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        window.onload = async function() {
+            if (!sessionStorage.getItem('isAuthenticated')) {
                 window.location.href = 'admin_login.html';
                 return;
             }
             
-            currentUser = user;
-            document.getElementById('userName').textContent = user.full_name || user.email;
+            userRole = sessionStorage.getItem('userRole') || 'admin';
+            userId = sessionStorage.getItem('userId');
             
-            // Load profile data
-            document.getElementById('fullName').value = user.full_name || '';
-            document.getElementById('email').value = user.email;
-            document.getElementById('accountInfo').textContent = 
-                `Role: ${user.role.toUpperCase()} | Email: ${user.email}`;
+            document.getElementById('userName').textContent = sessionStorage.getItem('userName') || 'Admin';
             
-            await loadSystemStats();
-        });
-
-        async function loadSystemStats() {
-            try {
-                const { count: licCount } = await supabase
-                    .from('licenses')
-                    .select('*', { count: 'exact', head: true });
-                
-                const { count: userCount } = await supabase
-                    .from('admin_users')
-                    .select('*', { count: 'exact', head: true });
-                
-                document.getElementById('totalLicenses').textContent = licCount || 0;
-                document.getElementById('totalUsers').textContent = userCount || 0;
-            } catch (error) {
-                console.error('Error loading stats:', error);
-            }
-        }
-
-        async function updateProfile() {
-            const fullName = document.getElementById('fullName').value;
+            const roleBadge = document.getElementById('userRole');
+            roleBadge.textContent = userRole.toUpperCase();
+            roleBadge.className = 'badge badge-' + userRole;
             
-            if (!fullName) {
-                alert('⚠️ Please enter your full name!');
-                return;
+            if (userRole === 'staff') {
+                document.getElementById('adminSection').style.display = 'none';
             }
             
+            await loadAccountInfo();
+            
+            document.getElementById('passwordForm').addEventListener('submit', changePassword);
+        };
+
+        async function loadAccountInfo() {
             try {
-                const { error } = await supabase
+                const { data: user, error } = await supabase
                     .from('admin_users')
-                    .update({ full_name: fullName })
-                    .eq('email', currentUser.email);
+                    .select('*')
+                    .eq('id', userId)
+                    .single();
                 
                 if (error) throw error;
                 
-                // Update localStorage
-                currentUser.full_name = fullName;
-                localStorage.setItem('user', JSON.stringify(currentUser));
+                if (user) {
+                    document.getElementById('accountEmail').textContent = user.email || '-';
+                    document.getElementById('accountName').textContent = user.full_name || '-';
+                    document.getElementById('accountRole').textContent = user.role ? user.role.toUpperCase() : '-';
+                    document.getElementById('accountId').textContent = user.id || '-';
+                    
+                    if (user.last_login) {
+                        const lastLogin = new Date(user.last_login).toLocaleString('th-TH');
+                        document.getElementById('lastLogin').textContent = lastLogin;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading account info:', error);
+            }
+        }
+
+        async function changePassword(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            const successMsg = document.getElementById('passwordSuccess');
+            const errorMsg = document.getElementById('passwordError');
+            
+            successMsg.classList.remove('show');
+            errorMsg.classList.remove('show');
+            
+            // Validate
+            if (newPassword !== confirmPassword) {
+                errorMsg.textContent = '❌ New passwords do not match';
+                errorMsg.classList.add('show');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                errorMsg.textContent = '❌ Password must be at least 6 characters';
+                errorMsg.classList.add('show');
+                return;
+            }
+            
+            try {
+                // Verify current password
+                const currentHash = await hashPassword(currentPassword);
+                const { data: user, error: verifyError } = await supabase
+                    .from('admin_users')
+                    .select('*')
+                    .eq('id', userId)
+                    .eq('password_hash', currentHash)
+                    .single();
                 
-                alert('✅ Profile updated successfully!');
-                location.reload();
+                if (verifyError || !user) {
+                    errorMsg.textContent = '❌ Current password is incorrect';
+                    errorMsg.classList.add('show');
+                    return;
+                }
+                
+                // Update password
+                const newHash = await hashPassword(newPassword);
+                const { error: updateError } = await supabase
+                    .from('admin_users')
+                    .update({
+                        password_hash: newHash,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', userId);
+                
+                if (updateError) throw updateError;
+                
+                // Success
+                successMsg.classList.add('show');
+                document.getElementById('passwordForm').reset();
+                
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    successMsg.classList.remove('show');
+                }, 3000);
                 
             } catch (error) {
-                alert('❌ Error: ' + error.message);
+                console.error('Error changing password:', error);
+                errorMsg.textContent = '❌ Error changing password: ' + error.message;
+                errorMsg.classList.add('show');
             }
         }
 
-        function changePassword() {
-            const current = document.getElementById('currentPassword').value;
-            const newPwd = document.getElementById('newPassword').value;
-            const confirm = document.getElementById('confirmPassword').value;
-            
-            if (!current || !newPwd || !confirm) {
-                alert('⚠️ Please fill all password fields!');
-                return;
-            }
-            
-            if (newPwd !== confirm) {
-                alert('❌ New passwords do not match!');
-                return;
-            }
-            
-            if (newPwd.length < 8) {
-                alert('❌ Password must be at least 8 characters!');
-                return;
-            }
-            
-            alert('⚠️ Password change requires Supabase Auth API.\n\nFor now, this is a placeholder.\n\nIn production, use supabase.auth.updateUser()');
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
         }
 
-        function clearLogs() {
-            if (!confirm('⚠️ Delete ALL activity logs?\n\nThis action CANNOT be undone!')) {
-                return;
-            }
-            
-            if (!confirm('❌ Are you ABSOLUTELY sure?\n\nThis will permanently delete all logs!')) {
-                return;
-            }
-            
-            alert('⚠️ This feature requires Owner permission.\n\nFor safety, this is disabled in demo.');
-        }
-
-        function deleteAccount() {
-            alert('⛔ Account deletion is disabled for safety.\n\nContact system administrator if you need to delete your account.');
-        }
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
+        });
 
         function logout() {
             if (confirm('ต้องการ Logout ใช่ไหม?')) {
-                localStorage.removeItem('user');
-                localStorage.removeItem('isLoggedIn');
+                sessionStorage.clear();
                 window.location.href = 'admin_login.html';
             }
         }
