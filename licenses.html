@@ -1003,11 +1003,25 @@
                 // Get license details
                 const { data: license, error: licenseError } = await supabase
                     .from('licenses')
-                    .select('*, users(full_name, email)')
+                    .select('*')
                     .eq('license_key', licenseKey)
                     .single();
                 
                 if (licenseError) throw licenseError;
+                
+                // Get user info separately if account_id exists
+                let userName = 'N/A';
+                if (license.account_id) {
+                    const { data: user } = await supabase
+                        .from('users')
+                        .select('full_name, email')
+                        .eq('account_id', license.account_id)
+                        .single();
+                    
+                    if (user) {
+                        userName = user.full_name || user.email || 'N/A';
+                    }
+                }
                 
                 // Display license info
                 const expiryDate = new Date(license.expires_at);
@@ -1025,7 +1039,7 @@
                     </div>
                     <div class="modal-info-item">
                         <div class="modal-info-label">User</div>
-                        <div class="modal-info-value">${license.users?.full_name || 'N/A'}</div>
+                        <div class="modal-info-value">${userName}</div>
                     </div>
                     <div class="modal-info-item">
                         <div class="modal-info-label">Status</div>
