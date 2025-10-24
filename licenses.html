@@ -328,6 +328,183 @@
             gap: 5px;
         }
         
+        /* Logs Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 25px;
+            max-height: calc(80vh - 140px);
+            overflow-y: auto;
+        }
+        
+        .modal-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .modal-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .modal-info-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .modal-info-value {
+            font-size: 15px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .logs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .logs-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #666;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .logs-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 14px;
+        }
+        
+        .logs-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .log-action {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .log-action.login { background: #d4edda; color: #155724; }
+        .log-action.approve { background: #cce5ff; color: #004085; }
+        .log-action.revoke { background: #f8d7da; color: #721c24; }
+        .log-action.extend { background: #fff3cd; color: #856404; }
+        .log-action.activate { background: #d1ecf1; color: #0c5460; }
+        
+        .empty-logs {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .empty-logs-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-footer {
+            padding: 15px 25px;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+        }
+        
+        .modal-stats {
+            font-size: 14px;
+            color: #666;
+        }
+        
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .sidebar {
@@ -375,6 +552,24 @@
             button {
                 padding: 6px 12px;
                 font-size: 12px;
+            }
+            
+            .modal {
+                width: 95%;
+                max-height: 90vh;
+            }
+            
+            .modal-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .logs-table {
+                font-size: 12px;
+            }
+            
+            .logs-table th,
+            .logs-table td {
+                padding: 8px;
             }
         }
         
@@ -516,7 +711,37 @@
         </div>
     </div>
 
+    <!-- Logs Modal -->
+    <div class="modal-overlay" id="logsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>
+                    <span>📋</span>
+                    <span>Activity Logs</span>
+                </h2>
+                <button class="modal-close" onclick="closeLogsModal()">×</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="modal-info" id="licenseInfo"></div>
+                
+                <div id="logsLoading" style="text-align: center; padding: 40px; display: none;">
+                    <div style="font-size: 40px; margin-bottom: 15px;">🔄</div>
+                    <div style="color: #666;">Loading logs...</div>
+                </div>
+                
+                <div id="logsContent"></div>
+            </div>
+            
+            <div class="modal-footer">
+                <div class="modal-stats" id="logsStats">Total: 0 logs</div>
+                <button class="btn-primary" onclick="closeLogsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="activity_logger.js"></script>
     <script>
         const SUPABASE_URL = 'https://qbfhwvpgnbgjapkxrpqc.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
@@ -542,6 +767,9 @@
             }
             
             loadLicenses();
+            
+            // 📝 Initialize Activity Logger
+            ActivityLogger.init(supabase);
             
             document.getElementById('searchInput').addEventListener('input', filterLicenses);
             document.getElementById('statusFilter').addEventListener('change', filterLicenses);
@@ -749,6 +977,12 @@
                 
                 if (error) throw error;
                 
+                // 📝 Log activity
+                await ActivityLogger.logAction('revoke_license', {
+                    license_key: key,
+                    reason: reason
+                }, 'license', key);
+                
                 alert('✅ Revoke License สำเร็จ');
                 loadLicenses();
                 
@@ -758,9 +992,156 @@
             }
         }
 
-        function viewLogs(key) {
-            alert(`📋 Logs สำหรับ License: ${key}\n\nฟีเจอร์นี้จะพัฒนาในเวอร์ชันถัดไป`);
+        async function viewLogs(licenseKey) {
+            // Open modal
+            document.getElementById('logsModal').classList.add('active');
+            document.getElementById('logsLoading').style.display = 'block';
+            document.getElementById('logsContent').innerHTML = '';
+            document.getElementById('licenseInfo').innerHTML = '';
+            
+            try {
+                // Get license details
+                const { data: license, error: licenseError } = await supabase
+                    .from('licenses')
+                    .select('*, users(full_name, email)')
+                    .eq('license_key', licenseKey)
+                    .single();
+                
+                if (licenseError) throw licenseError;
+                
+                // Display license info
+                const expiryDate = new Date(license.expires_at);
+                const statusClass = license.is_active && expiryDate > new Date() ? 'status-active' : 'status-inactive';
+                const statusText = license.is_active && expiryDate > new Date() ? 'Active' : 'Inactive';
+                
+                document.getElementById('licenseInfo').innerHTML = `
+                    <div class="modal-info-item">
+                        <div class="modal-info-label">License Key</div>
+                        <div class="modal-info-value"><code>${license.license_key}</code></div>
+                    </div>
+                    <div class="modal-info-item">
+                        <div class="modal-info-label">Account ID</div>
+                        <div class="modal-info-value">${license.account_id || 'Not Bound'}</div>
+                    </div>
+                    <div class="modal-info-item">
+                        <div class="modal-info-label">User</div>
+                        <div class="modal-info-value">${license.users?.full_name || 'N/A'}</div>
+                    </div>
+                    <div class="modal-info-item">
+                        <div class="modal-info-label">Status</div>
+                        <div class="modal-info-value">
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Get activity logs
+                const { data: logs, error: logsError } = await supabase
+                    .from('activity_logs')
+                    .select('*')
+                    .eq('target_id', licenseKey)
+                    .order('created_at', { ascending: false })
+                    .limit(50);
+                
+                if (logsError) throw logsError;
+                
+                document.getElementById('logsLoading').style.display = 'none';
+                
+                if (!logs || logs.length === 0) {
+                    document.getElementById('logsContent').innerHTML = `
+                        <div class="empty-logs">
+                            <div class="empty-logs-icon">📋</div>
+                            <h3>No Activity Logs</h3>
+                            <p>ยังไม่มีประวัติการใช้งาน License นี้</p>
+                        </div>
+                    `;
+                    document.getElementById('logsStats').textContent = 'Total: 0 logs';
+                    return;
+                }
+                
+                // Display logs table
+                let logsHTML = `
+                    <table class="logs-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Action</th>
+                                <th>User</th>
+                                <th>Details</th>
+                                <th>IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                logs.forEach(log => {
+                    const timestamp = new Date(log.created_at).toLocaleString('th-TH', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const actionClass = getActionClass(log.action);
+                    const details = log.details ? JSON.stringify(log.details) : '-';
+                    
+                    logsHTML += `
+                        <tr>
+                            <td style="white-space: nowrap;">${timestamp}</td>
+                            <td>
+                                <span class="log-action ${actionClass}">${log.action}</span>
+                            </td>
+                            <td>${log.user_name || log.user_email}</td>
+                            <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
+                                ${details}
+                            </td>
+                            <td>${log.ip_address || '-'}</td>
+                        </tr>
+                    `;
+                });
+                
+                logsHTML += `
+                        </tbody>
+                    </table>
+                `;
+                
+                document.getElementById('logsContent').innerHTML = logsHTML;
+                document.getElementById('logsStats').textContent = `Total: ${logs.length} log${logs.length > 1 ? 's' : ''}`;
+                
+            } catch (error) {
+                console.error('Error loading logs:', error);
+                document.getElementById('logsLoading').style.display = 'none';
+                document.getElementById('logsContent').innerHTML = `
+                    <div class="empty-logs">
+                        <div class="empty-logs-icon">❌</div>
+                        <h3>Error Loading Logs</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
         }
+        
+        function getActionClass(action) {
+            const lowerAction = action.toLowerCase();
+            if (lowerAction.includes('login')) return 'login';
+            if (lowerAction.includes('approve')) return 'approve';
+            if (lowerAction.includes('revoke')) return 'revoke';
+            if (lowerAction.includes('extend')) return 'extend';
+            if (lowerAction.includes('activate') || lowerAction.includes('create')) return 'activate';
+            return '';
+        }
+        
+        function closeLogsModal() {
+            document.getElementById('logsModal').classList.remove('active');
+        }
+        
+        // Close modal on overlay click
+        document.getElementById('logsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLogsModal();
+            }
+        });
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');

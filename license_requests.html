@@ -745,6 +745,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="activity_logger.js"></script>
     <script>
         const SUPABASE_URL = 'https://qbfhwvpgnbgjapkxrpqc.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
@@ -773,6 +774,9 @@
             
             loadRequests();
             loadStats();
+            
+            // 📝 Initialize Activity Logger
+            ActivityLogger.init(supabase);
             
             document.getElementById('searchInput').addEventListener('input', filterRequests);
             document.getElementById('statusFilter').addEventListener('change', loadRequests);
@@ -963,6 +967,14 @@
                 
                 if (updateError) throw updateError;
                 
+                // 📝 Log activity
+                await ActivityLogger.logAction('approve_license_request', {
+                    request_id: currentRequest.id,
+                    license_key: licenseKey,
+                    account_id: currentRequest.account_id,
+                    days: days
+                }, 'license_request', currentRequest.id);
+                
                 alert(`✅ อนุมัติสำเร็จ!\n\nLicense Key: ${licenseKey}\nExpires: ${expiryDate.toLocaleDateString('th-TH')}`);
                 closeModal('approveModal');
                 loadRequests();
@@ -993,6 +1005,13 @@
                     .eq('id', currentRequest.id);
                 
                 if (error) throw error;
+                
+                // 📝 Log activity
+                await ActivityLogger.logAction('reject_license_request', {
+                    request_id: currentRequest.id,
+                    account_id: currentRequest.account_id,
+                    reason: reason
+                }, 'license_request', currentRequest.id);
                 
                 alert('✅ ปฏิเสธคำขอสำเร็จ');
                 closeModal('rejectModal');
