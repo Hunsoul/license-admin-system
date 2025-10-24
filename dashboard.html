@@ -527,21 +527,114 @@
 
         async function loadStats() {
             try {
-                const { count: totalLic } = await supabase.from('licenses').select('*', { count: 'exact', head: true });
-                document.getElementById('totalLicenses').textContent = totalLic || 0;
+                // Show loading state
+                document.getElementById('totalLicenses').textContent = '...';
+                document.getElementById('activeLicenses').textContent = '...';
+                document.getElementById('expiringSoon').textContent = '...';
+                document.getElementById('totalUsers').textContent = '...';
                 
-                const { count: activeLic } = await supabase.from('licenses').select('*', { count: 'exact', head: true }).eq('is_active', true);
-                document.getElementById('activeLicenses').textContent = activeLic || 0;
+                // Load all stats in parallel for better performance
+                const [licenseStats, userStats, requestStats] = await Promise.all([
+                    loadLicenseStats(),
+                    loadUserStats(),
+                    loadRequestStats()
+                ]);
                 
+                // Update UI with real data
+                document.getElementById('totalLicenses').textContent = licenseStats.total;
+                document.getElementById('activeLicenses').textContent = licenseStats.active;
+                document.getElementById('expiringSoon').textContent = licenseStats.expiring;
+                document.getElementById('totalUsers').textContent = userStats.total;
+                
+                console.log('📊 Dashboard Stats Loaded:', {
+                    licenses: licenseStats,
+                    users: userStats,
+                    requests: requestStats
+                });
+                
+            } catch (error) {
+                console.error('❌ Error loading stats:', error);
+                // Show error state
+                document.getElementById('totalLicenses').textContent = 'Error';
+                document.getElementById('activeLicenses').textContent = 'Error';
+                document.getElementById('expiringSoon').textContent = 'Error';
+                document.getElementById('totalUsers').textContent = 'Error';
+            }
+        }
+        
+        async function loadLicenseStats() {
+            try {
+                // Total licenses
+                const { count: total } = await supabase
+                    .from('licenses')
+                    .select('*', { count: 'exact', head: true });
+                
+                // Active licenses
+                const now = new Date().toISOString();
+                const { count: active } = await supabase
+                    .from('licenses')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('is_active', true)
+                    .gte('expires_at', now);
+                
+                // Expiring soon (within 30 days)
                 const thirtyDaysFromNow = new Date();
                 thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-                const { count: expiring } = await supabase.from('licenses').select('*', { count: 'exact', head: true }).eq('is_active', true).lte('expires_at', thirtyDaysFromNow.toISOString());
-                document.getElementById('expiringSoon').textContent = expiring || 0;
+                const { count: expiring } = await supabase
+                    .from('licenses')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('is_active', true)
+                    .gte('expires_at', now)
+                    .lte('expires_at', thirtyDaysFromNow.toISOString());
                 
-                const { count: totalUsr } = await supabase.from('admin_users').select('*', { count: 'exact', head: true });
-                document.getElementById('totalUsers').textContent = totalUsr || 0;
+                return {
+                    total: total || 0,
+                    active: active || 0,
+                    expiring: expiring || 0
+                };
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error loading license stats:', error);
+                return { total: 0, active: 0, expiring: 0 };
+            }
+        }
+        
+        async function loadUserStats() {
+            try {
+                // Total users (customers)
+                const { count: total } = await supabase
+                    .from('users')
+                    .select('*', { count: 'exact', head: true });
+                
+                // Active users
+                const { count: active } = await supabase
+                    .from('users')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('is_active', true);
+                
+                return {
+                    total: total || 0,
+                    active: active || 0
+                };
+            } catch (error) {
+                console.error('Error loading user stats:', error);
+                return { total: 0, active: 0 };
+            }
+        }
+        
+        async function loadRequestStats() {
+            try {
+                // Pending license requests
+                const { count: pending } = await supabase
+                    .from('license_requests')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'pending');
+                
+                return {
+                    pending: pending || 0
+                };
+            } catch (error) {
+                console.error('Error loading request stats:', error);
+                return { pending: 0 };
             }
         }
 

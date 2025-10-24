@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔐 Admin Login</title>
+    <title>🔐 Admin Login - License System</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -25,7 +25,7 @@
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            padding: 50px 40px;
+            padding: 40px;
             max-width: 400px;
             width: 100%;
         }
@@ -36,24 +36,78 @@
         }
         
         .logo-icon {
-            font-size: 60px;
+            font-size: 64px;
             margin-bottom: 10px;
         }
         
-        .logo h1 {
-            color: #667eea;
-            font-size: 28px;
-            margin-bottom: 5px;
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
         }
         
-        .logo p {
-            color: #999;
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
             font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
         
         .error-message {
             background: #fee;
-            border: 1px solid #fcc;
             color: #c33;
             padding: 12px;
             border-radius: 8px;
@@ -66,58 +120,11 @@
             display: block;
         }
         
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #333;
-            font-weight: 500;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.3s;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        .login-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 10px;
-        }
-        
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-        
-        .login-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
+        .loading {
+            text-align: center;
+            color: #667eea;
+            margin-top: 15px;
+            display: none;
         }
         
         .footer {
@@ -127,11 +134,37 @@
             font-size: 12px;
         }
         
-        .loading {
-            display: none;
-            text-align: center;
-            margin-top: 10px;
+        .demo-accounts {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+        
+        .demo-accounts h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
             color: #667eea;
+        }
+        
+        .demo-accounts p {
+            margin: 5px 0;
+            color: #666;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .logo-icon {
+                font-size: 48px;
+            }
         }
     </style>
 </head>
@@ -139,12 +172,12 @@
     <div class="login-container">
         <div class="logo">
             <div class="logo-icon">🔐</div>
-            <h1>License Admin</h1>
-            <p>Management System</p>
+            <h1>Admin Login</h1>
+            <div class="subtitle">License Management System</div>
         </div>
         
         <div class="error-message" id="errorMessage">
-            ❌ Invalid login credentials
+            ❌ Invalid credentials
         </div>
         
         <form id="loginForm">
@@ -183,21 +216,42 @@
             </div>
         </form>
         
+        <div class="demo-accounts">
+            <h3>🧪 Demo Accounts (ใช้รหัส: password123)</h3>
+            <p><strong>Owner:</strong> owner@example.com</p>
+            <p><strong>Admin:</strong> admin@example.com</p>
+            <p><strong>Staff:</strong> staff@example.com</p>
+        </div>
+        
         <div class="footer">
-            License Management System v1.0
+            License Management System v1.0<br>
+            🔒 Password Hashing: SHA-256
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Supabase Config
         const SUPABASE_URL = 'https://qbfhwvpgnbgjapkxrpqc.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // Check if already logged in
         if (sessionStorage.getItem('isAuthenticated')) {
             window.location.href = 'dashboard.html';
         }
 
+        // 🔒 PASSWORD HASHING FUNCTION (SHA-256)
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        // Handle form submission
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -207,44 +261,66 @@
             const loading = document.getElementById('loading');
             const errorMessage = document.getElementById('errorMessage');
             
+            // Hide error
             errorMessage.classList.remove('show');
+            
+            // Show loading
             loginBtn.disabled = true;
             loginBtn.textContent = 'Logging in...';
             loading.style.display = 'block';
             
             try {
+                // 🔒 Hash password before checking
+                const hashedPassword = await hashPassword(password);
+                
+                console.log('Hashed password:', hashedPassword); // For debugging
+                
+                // Query admin user with hashed password
                 const { data: users, error } = await supabase
                     .from('admin_users')
                     .select('*')
-                    .eq('email', email);
+                    .eq('email', email)
+                    .eq('password_hash', hashedPassword)
+                    .eq('is_active', true)
+                    .single();
                 
-                if (error) throw error;
-                
-                if (!users || users.length === 0) {
-                    throw new Error('User not found');
+                if (error || !users) {
+                    throw new Error('Invalid email or password');
                 }
                 
-                if (password === 'Admin@123') {
-                    sessionStorage.setItem('isAuthenticated', 'true');
-                    sessionStorage.setItem('userEmail', email);
+                // Login successful
+                sessionStorage.setItem('isAuthenticated', 'true');
+                sessionStorage.setItem('userEmail', users.email);
+                sessionStorage.setItem('userName', users.full_name || users.email);
+                sessionStorage.setItem('userRole', users.role);
+                sessionStorage.setItem('userId', users.id);
+                
+                // Show success
+                loginBtn.textContent = '✅ Login Successful!';
+                
+                // Redirect to dashboard
+                setTimeout(() => {
                     window.location.href = 'dashboard.html';
-                } else {
-                    throw new Error('Invalid password');
-                }
+                }, 500);
                 
             } catch (error) {
                 console.error('Login error:', error);
-                errorMessage.textContent = '❌ ' + (error.message || 'Invalid login credentials');
+                errorMessage.textContent = '❌ ' + (error.message || 'Invalid email or password');
                 errorMessage.classList.add('show');
+                
+                // Reset button
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Login';
                 loading.style.display = 'none';
             }
         });
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('email').value = 'admin@example.com';
-        });
+
+        // Helper: Generate hashed password for testing
+        // Uncomment to generate hash for "password123"
+        // (async () => {
+        //     const hash = await hashPassword('password123');
+        //     console.log('Hash for "password123":', hash);
+        // })();
     </script>
 </body>
 </html>

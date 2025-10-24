@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 License Verification API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Monaco', 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #4ec9b0;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        .subtitle {
+            color: #858585;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .section {
+            background: #252526;
+            border: 1px solid #3e3e42;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            color: #569cd6;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .endpoint {
+            background: #1e1e1e;
+            border-left: 3px solid #4ec9b0;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .method {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #4ec9b0;
+            color: #1e1e1e;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+        .url {
+            color: #ce9178;
+            font-size: 14px;
+        }
+        .param {
+            color: #9cdcfe;
+        }
+        .example {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        pre {
+            margin: 0;
+            color: #d4d4d4;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .json-key {
+            color: #9cdcfe;
+        }
+        .json-string {
+            color: #ce9178;
+        }
+        .json-number {
+            color: #b5cea8;
+        }
+        .json-boolean {
+            color: #569cd6;
+        }
+        .test-form {
+            background: #2d2d30;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #9cdcfe;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            color: #d4d4d4;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .btn:hover {
+            background: #1177bb;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #1e1e1e;
+            border-radius: 4px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-valid {
+            background: #4ec9b0;
+            color: #1e1e1e;
+        }
+        .status-invalid {
+            background: #f48771;
+            color: #1e1e1e;
+        }
+        .status-expired {
+            background: #dcdcaa;
+            color: #1e1e1e;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #3e3e42;
+        }
+        th {
+            color: #4ec9b0;
+            font-weight: 600;
+        }
+        td {
+            color: #d4d4d4;
+        }
+        .note {
+            background: #2d2d30;
+            border-left: 3px solid #dcdcaa;
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #d4d4d4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 License Verification API</h1>
+        <div class="subtitle">RESTful API for validating license keys in real-time</div>
+
+        <!-- API Documentation -->
+        <div class="section">
+            <h2>📡 API Endpoint</h2>
+            <div class="endpoint">
+                <span class="method">GET</span>
+                <span class="url">https://license-admin-system.vercel.app/api/verify</span>
+            </div>
+            
+            <h3 style="color: #569cd6; margin-top: 20px;">Query Parameters:</h3>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Type</th>
+                    <th>Required</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><span class="param">license_key</span></td>
+                    <td>string</td>
+                    <td>✅ Yes</td>
+                    <td>The license key to verify</td>
+                </tr>
+                <tr>
+                    <td><span class="param">account_id</span></td>
+                    <td>integer</td>
+                    <td>❌ No</td>
+                    <td>Account ID for additional validation</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Response Examples -->
+        <div class="section">
+            <h2>📤 Response Examples</h2>
+            
+            <h3 style="color: #4ec9b0; margin-top: 20px;">✅ Valid License:</h3>
+            <div class="example">
+                <pre>{
+  <span class="json-key">"status"</span>: <span class="json-string">"valid"</span>,
+  <span class="json-key">"message"</span>: <span class="json-string">"License is valid"</span>,
+  <span class="json-key">"data"</span>: {
+    <span class="json-key">"license_key"</span>: <span class="json-string">"ABCD-1234-EFGH-5678"</span>,
+    <span class="json-key">"account_id"</span>: <span class="json-number">12345</span>,
+    <span class="json-key">"is_active"</span>: <span class="json-boolean">true</span>,
+    <span class="json-key">"expires_at"</span>: <span class="json-string">"2025-12-31T23:59:59Z"</span>,
+    <span class="json-key">"days_remaining"</span>: <span class="json-number">245</span>,
+    <span class="json-key">"max_activations"</span>: <span class="json-number">1</span>,
+    <span class="json-key">"current_activations"</span>: <span class="json-number">1</span>
+  }
+}</pre>
+            </div>
+
+            <h3 style="color: #f48771; margin-top: 20px;">❌ Invalid License:</h3>
+            <div class="example">
+                <pre>{
+  <span class="json-key">"status"</span>: <span class="json-string">"invalid"</span>,
+  <span class="json-key">"message"</span>: <span class="json-string">"License key not found"</span>,
+  <span class="json-key">"data"</span>: <span class="json-boolean">null</span>
+}</pre>
+            </div>
+
+            <h3 style="color: #dcdcaa; margin-top: 20px;">⏰ Expired License:</h3>
+            <div class="example">
+                <pre>{
+  <span class="json-key">"status"</span>: <span class="json-string">"expired"</span>,
+  <span class="json-key">"message"</span>: <span class="json-string">"License has expired"</span>,
+  <span class="json-key">"data"</span>: {
+    <span class="json-key">"license_key"</span>: <span class="json-string">"ABCD-1234-EFGH-5678"</span>,
+    <span class="json-key">"expired_at"</span>: <span class="json-string">"2024-12-31T23:59:59Z"</span>
+  }
+}</pre>
+            </div>
+        </div>
+
+        <!-- Usage Examples -->
+        <div class="section">
+            <h2>💻 Usage Examples</h2>
+            
+            <h3 style="color: #569cd6; margin-top: 20px;">JavaScript (Fetch API):</h3>
+            <div class="example">
+                <pre>const licenseKey = 'ABCD-1234-EFGH-5678';
+const accountId = 12345;
+
+fetch(`https://license-admin-system.vercel.app/api/verify?license_key=${licenseKey}&account_id=${accountId}`)
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'valid') {
+      console.log('License is valid!');
+      console.log('Expires in:', data.data.days_remaining, 'days');
+    } else {
+      console.log('License is invalid:', data.message);
+    }
+  });</pre>
+            </div>
+
+            <h3 style="color: #569cd6; margin-top: 20px;">cURL:</h3>
+            <div class="example">
+                <pre>curl "https://license-admin-system.vercel.app/api/verify?license_key=ABCD-1234-EFGH-5678&account_id=12345"</pre>
+            </div>
+
+            <h3 style="color: #569cd6; margin-top: 20px;">Python:</h3>
+            <div class="example">
+                <pre>import requests
+
+license_key = 'ABCD-1234-EFGH-5678'
+account_id = 12345
+
+response = requests.get(
+    'https://license-admin-system.vercel.app/api/verify',
+    params={'license_key': license_key, 'account_id': account_id}
+)
+
+data = response.json()
+if data['status'] == 'valid':
+    print(f"License valid! Days remaining: {data['data']['days_remaining']}")</pre>
+            </div>
+        </div>
+
+        <!-- Live Test -->
+        <div class="section">
+            <h2>🧪 Live API Test</h2>
+            <div class="note">
+                ⚠️ <strong>Note:</strong> This will make a real API call to the verification endpoint
+            </div>
+            
+            <div class="test-form">
+                <div class="form-group">
+                    <label>License Key:</label>
+                    <input type="text" id="testLicenseKey" placeholder="ABCD-1234-EFGH-5678">
+                </div>
+                <div class="form-group">
+                    <label>Account ID (Optional):</label>
+                    <input type="number" id="testAccountId" placeholder="12345">
+                </div>
+                <button class="btn" onclick="testAPI()">🚀 Test Verification</button>
+                
+                <div class="result" id="testResult"></div>
+            </div>
+        </div>
+
+        <!-- Status Codes -->
+        <div class="section">
+            <h2>📊 Status Codes</h2>
+            <table>
+                <tr>
+                    <th>Status</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><span class="status-badge status-valid">valid</span></td>
+                    <td>License is active and not expired</td>
+                </tr>
+                <tr>
+                    <td><span class="status-badge status-invalid">invalid</span></td>
+                    <td>License key not found or revoked</td>
+                </tr>
+                <tr>
+                    <td><span class="status-badge status-expired">expired</span></td>
+                    <td>License has passed expiration date</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://qbfhwvpgnbgjapkxrpqc.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZmh3dnBnbmJnamFwa3hycHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5OTk2MTgsImV4cCI6MjA3NTU3NTYxOH0.VweA2K5QfKbeWMfNGjABOJA1kRnoFmyjEOKrEW9Dmp8';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // API Verification Logic
+        async function verifyLicense(licenseKey, accountId = null) {
+            try {
+                let query = supabase
+                    .from('licenses')
+                    .select('*')
+                    .eq('license_key', licenseKey)
+                    .single();
+                
+                const { data: license, error } = await query;
+                
+                if (error || !license) {
+                    return {
+                        status: 'invalid',
+                        message: 'License key not found',
+                        data: null
+                    };
+                }
+                
+                // Check if license is active
+                if (!license.is_active) {
+                    return {
+                        status: 'invalid',
+                        message: 'License has been revoked',
+                        data: {
+                            license_key: licenseKey,
+                            revoked_at: license.revoked_at,
+                            revoke_reason: license.revoke_reason
+                        }
+                    };
+                }
+                
+                // Check expiration
+                const expiryDate = new Date(license.expires_at);
+                const now = new Date();
+                
+                if (expiryDate < now) {
+                    return {
+                        status: 'expired',
+                        message: 'License has expired',
+                        data: {
+                            license_key: licenseKey,
+                            expired_at: license.expires_at
+                        }
+                    };
+                }
+                
+                // Check account ID if provided
+                if (accountId && license.account_id && license.account_id != accountId) {
+                    return {
+                        status: 'invalid',
+                        message: 'License key does not match account ID',
+                        data: null
+                    };
+                }
+                
+                // Calculate days remaining
+                const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+                
+                return {
+                    status: 'valid',
+                    message: 'License is valid',
+                    data: {
+                        license_key: license.license_key,
+                        account_id: license.account_id,
+                        is_active: license.is_active,
+                        expires_at: license.expires_at,
+                        days_remaining: daysRemaining,
+                        max_activations: license.max_activations,
+                        current_activations: license.current_activations || 0
+                    }
+                };
+                
+            } catch (error) {
+                return {
+                    status: 'error',
+                    message: 'Verification failed: ' + error.message,
+                    data: null
+                };
+            }
+        }
+
+        // Test API Function
+        async function testAPI() {
+            const licenseKey = document.getElementById('testLicenseKey').value.trim();
+            const accountId = document.getElementById('testAccountId').value.trim();
+            const resultDiv = document.getElementById('testResult');
+            
+            if (!licenseKey) {
+                resultDiv.innerHTML = '<pre style="color: #f48771;">Error: Please enter a license key</pre>';
+                resultDiv.classList.add('show');
+                return;
+            }
+            
+            resultDiv.innerHTML = '<pre style="color: #569cd6;">⏳ Verifying license...</pre>';
+            resultDiv.classList.add('show');
+            
+            const result = await verifyLicense(licenseKey, accountId || null);
+            
+            // Format JSON with colors
+            let statusColor = '#4ec9b0';
+            if (result.status === 'invalid' || result.status === 'error') {
+                statusColor = '#f48771';
+            } else if (result.status === 'expired') {
+                statusColor = '#dcdcaa';
+            }
+            
+            resultDiv.innerHTML = `<pre style="color: ${statusColor};">${JSON.stringify(result, null, 2)}</pre>`;
+        }
+
+        // Handle URL parameters for direct API calls
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const licenseKey = urlParams.get('license_key');
+            const accountId = urlParams.get('account_id');
+            
+            if (licenseKey) {
+                // Return JSON response for API calls
+                verifyLicense(licenseKey, accountId).then(result => {
+                    document.body.innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+                    document.body.style.whiteSpace = 'pre-wrap';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
