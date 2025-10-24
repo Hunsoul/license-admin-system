@@ -397,6 +397,56 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+    
+        .activity-item {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+        }
+        
+        .activity-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-user {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .activity-action {
+            color: #666;
+            font-size: 13px;
+            margin-top: 2px;
+        }
+        
+        .activity-time {
+            color: #999;
+            font-size: 12px;
+        }
+
     </style>
 </head>
 <body>
@@ -450,21 +500,23 @@
             
             <div class="sidebar-divider"></div>
             
-            <div class="sidebar-section" id="adminSection">
-                <div class="sidebar-section-title">Administration</div>
+                        <div class="sidebar-section" id="adminSection">
+                <div class="sidebar-section-title">ADMINISTRATION</div>
                 <a href="team.html" class="sidebar-item">
-                    <span class="sidebar-icon">👔</span>
+                    <span class="sidebar-icon">👨‍💼</span>
                     <span>Team Management</span>
-                </a>                
+                </a>
+                
                 <!-- 🆕 ACTIVITY LOGS - OWNER ONLY -->
                 <a href="activity_logs.html" class="sidebar-item" id="activityLogsMenu" style="display: none;">
                     <span class="sidebar-icon">📝</span>
                     <span>Activity Logs</span>
                     <span class="owner-only-badge">👑</span>
                 </a>
-                <a href="approvals.html" class="sidebar-item">
-                    <span class="sidebar-icon">✅</span>
-                    <span>Approvals</span>
+                
+                <a href="settings.html" class="sidebar-item">
+                    <span class="sidebar-icon">⚙️</span>
+                    <span>Settings</span>
                 </a>
             </div>
         </div>
@@ -496,10 +548,32 @@
                         <div class="stat-icon">👥</div>
                         <div class="stat-label">Total Users</div>
                         <div class="stat-value" id="totalUsers">0</div>
+                    </div>                    
+                    <div class="stat-card" onclick="window.location.href='activity_logs.html'" style="cursor: pointer;" id="activityLogsCard">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-label">Activity Logs</div>
+                        <div class="stat-value" id="totalActivities">0</div>
+                        <div style="font-size: 12px; color: #999; margin-top: 5px;">👑 Owner Only</div>
                     </div>
                 </div>
 
-                <!-- Charts Section -->
+                
+                <!-- Recent Activity (Owner Only) -->
+                <div class="recent-activity-section" id="recentActivitySection" style="display: none; margin-bottom: 30px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="color: #333;">📝 Recent Activity</h2>
+                        <a href="activity_logs.html" style="color: #667eea; text-decoration: none; font-weight: 600;">View All →</a>
+                    </div>
+                    
+                    <div style="background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 20px;">
+                        <div id="recentActivityList">
+                            <div style="text-align: center; padding: 20px; color: #999;">
+                                Loading recent activities...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<!-- Charts Section -->
                 <div class="charts-section" style="margin-top: 30px;">
                     <h2 style="margin-bottom: 20px; color: #333;">📊 Analytics</h2>
                     
@@ -575,6 +649,7 @@
             }
             
             await loadStats();
+            await loadActivityData();
             await initCharts();
             
             // 🔔 Initialize notification system
@@ -837,6 +912,97 @@
                 window.location.href = 'admin_login.html';
             }
         }
+    
+        // Load activity logs count and recent activities (Owner only)
+        async function loadActivityData() {
+            if (userRole !== 'owner') {
+                // Hide activity logs card for non-owners
+                const card = document.getElementById('activityLogsCard');
+                if (card) card.style.display = 'none';
+                return;
+            }
+            
+            // Show activity logs card
+            const card = document.getElementById('activityLogsCard');
+            if (card) card.style.display = 'block';
+            
+            // Show recent activity section
+            const section = document.getElementById('recentActivitySection');
+            if (section) section.style.display = 'block';
+            
+            try {
+                // Get total activity count
+                const { count: totalCount } = await supabase
+                    .from('activity_logs')
+                    .select('*', { count: 'exact', head: true });
+                
+                document.getElementById('totalActivities').textContent = totalCount || 0;
+                
+                // Get recent 5 activities
+                const { data: recentActivities } = await supabase
+                    .from('activity_logs')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+                
+                if (recentActivities && recentActivities.length > 0) {
+                    displayRecentActivities(recentActivities);
+                } else {
+                    document.getElementById('recentActivityList').innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: #999;">
+                            No recent activities
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading activity data:', error);
+            }
+        }
+        
+        function displayRecentActivities(activities) {
+            const container = document.getElementById('recentActivityList');
+            
+            const html = activities.map(activity => {
+                const icon = getActivityIcon(activity.action);
+                const time = new Date(activity.created_at).toLocaleString('th-TH', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                return `
+                    <div class="activity-item">
+                        <div class="activity-icon">${icon}</div>
+                        <div class="activity-content">
+                            <div class="activity-user">${activity.user_name || 'Unknown'}</div>
+                            <div class="activity-action">${activity.action}</div>
+                        </div>
+                        <div class="activity-time">${time}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = html;
+        }
+        
+        function getActivityIcon(action) {
+            const icons = {
+                'login': '🔓',
+                'logout': '🔒',
+                'create': '➕',
+                'update': '✏️',
+                'delete': '🗑️',
+                'approve': '✅',
+                'reject': '❌',
+                'view': '👁️',
+                'export': '📥'
+            };
+            
+            const actionType = action.toLowerCase().split('_')[0];
+            return icons[actionType] || '📝';
+        }
+
     </script>
 </body>
 </html>
