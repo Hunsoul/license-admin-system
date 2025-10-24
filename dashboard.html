@@ -367,6 +367,10 @@
             .quick-actions {
                 grid-template-columns: 1fr;
             }
+            
+            .charts-grid {
+                grid-template-columns: 1fr !important;
+            }
         }
         
         /* Tablet Responsive */
@@ -489,6 +493,25 @@
                     </div>
                 </div>
 
+                <!-- Charts Section -->
+                <div class="charts-section" style="margin-top: 30px;">
+                    <h2 style="margin-bottom: 20px; color: #333;">📊 Analytics</h2>
+                    
+                    <div class="charts-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
+                        <!-- License Status Chart -->
+                        <div class="chart-card" style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <h3 style="font-size: 16px; color: #666; margin-bottom: 20px; font-weight: 600;">License Status Distribution</h3>
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                        
+                        <!-- Monthly Trend Chart -->
+                        <div class="chart-card" style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <h3 style="font-size: 16px; color: #666; margin-bottom: 20px; font-weight: 600;">License Trend (Last 6 Months)</h3>
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Welcome -->
                 <div class="welcome">
                     <h2>🎉 Welcome back, <span id="welcomeName">Admin</span>!</h2>
@@ -518,6 +541,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="notification.js"></script>
     <script>
@@ -545,6 +569,7 @@
             }
             
             await loadStats();
+            await initCharts();
             
             // 🔔 Initialize notification system
             NotificationSystem.init(supabase);
@@ -677,6 +702,128 @@
                 }
             });
         });
+
+        // Initialize Charts
+        async function initCharts() {
+            await loadStatusChart();
+            await loadTrendChart();
+        }
+
+        // Status Pie Chart
+        async function loadStatusChart() {
+            try {
+                const now = new Date().toISOString();
+                
+                // Get active licenses
+                const { count: active } = await supabase
+                    .from('licenses')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('is_active', true)
+                    .gte('expires_at', now);
+                
+                // Get expired licenses
+                const { count: expired } = await supabase
+                    .from('licenses')
+                    .select('*', { count: 'exact', head: true })
+                    .lt('expires_at', now);
+                
+                // Get revoked licenses
+                const { count: revoked } = await supabase
+                    .from('licenses')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('is_active', false);
+                
+                const ctx = document.getElementById('statusChart');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Active', 'Expired', 'Revoked'],
+                        datasets: [{
+                            data: [active || 0, expired || 0, revoked || 0],
+                            backgroundColor: [
+                                '#28a745',
+                                '#dc3545',
+                                '#6c757d'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading status chart:', error);
+            }
+        }
+
+        // Trend Line Chart
+        async function loadTrendChart() {
+            try {
+                // Get last 6 months data
+                const months = [];
+                const data = [];
+                
+                for (let i = 5; i >= 0; i--) {
+                    const date = new Date();
+                    date.setMonth(date.getMonth() - i);
+                    
+                    const monthStart = new Date(date.getFullYear(), date.getMonth(), 1).toISOString();
+                    const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59).toISOString();
+                    
+                    const { count } = await supabase
+                        .from('licenses')
+                        .select('*', { count: 'exact', head: true })
+                        .gte('created_at', monthStart)
+                        .lte('created_at', monthEnd);
+                    
+                    months.push(date.toLocaleDateString('th-TH', { month: 'short', year: '2-digit' }));
+                    data.push(count || 0);
+                }
+                
+                const ctx = document.getElementById('trendChart');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: 'New Licenses',
+                            data: data,
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading trend chart:', error);
+            }
+        }
 
         function logout() {
             if (confirm('ต้องการ Logout ใช่ไหม?')) {

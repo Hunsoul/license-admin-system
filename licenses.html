@@ -467,7 +467,23 @@
                     <div class="search-box">
                         <input type="text" id="searchInput" placeholder="🔍 ค้นหา License Key, Account ID...">
                     </div>
+                    
+                    <select id="statusFilter" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; min-width: 150px; cursor: pointer;">
+                        <option value="">📊 ทุกสถานะ</option>
+                        <option value="active">✅ Active</option>
+                        <option value="expired">❌ Expired</option>
+                        <option value="expiring">⚠️ Expiring Soon</option>
+                    </select>
+                    
+                    <select id="sortBy" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; min-width: 150px; cursor: pointer;">
+                        <option value="created_at_desc">🆕 ใหม่ล่าสุด</option>
+                        <option value="created_at_asc">🕐 เก่าสุด</option>
+                        <option value="expires_at_asc">⏰ หมดอายุเร็วสุด</option>
+                        <option value="expires_at_desc">⏰ หมดอายุช้าสุด</option>
+                    </select>
+                    
                     <button class="btn-primary" onclick="loadLicenses()">🔄 Refresh</button>
+                    <button class="btn-success" onclick="exportLicensesToCSV()">📥 Export CSV</button>
                 </div>
 
                 <div class="licenses-table">
@@ -528,6 +544,8 @@
             loadLicenses();
             
             document.getElementById('searchInput').addEventListener('input', filterLicenses);
+            document.getElementById('statusFilter').addEventListener('change', filterLicenses);
+            document.getElementById('sortBy').addEventListener('change', filterLicenses);
         };
 
         async function loadLicenses() {
@@ -543,6 +561,7 @@
                 
                 if (error) throw error;
                 
+                allLicenses = licenses; // Store globally
                 displayLicenses(licenses);
                 
             } catch (error) {
@@ -594,14 +613,116 @@
             });
         }
 
+        let allLicenses = []; // Store all licenses globally
+
         function filterLicenses() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#licensesBody tr');
+            const statusFilter = document.getElementById('statusFilter').value;
+            const sortBy = document.getElementById('sortBy').value;
             
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            // Start with all licenses
+            let filtered = [...allLicenses];
+            
+            // Apply search filter
+            if (searchTerm) {
+                filtered = filtered.filter(license => {
+                    const searchText = `${license.license_key} ${license.account_id || ''}`.toLowerCase();
+                    return searchText.includes(searchTerm);
+                });
+            }
+            
+            // Apply status filter
+            const now = new Date();
+            const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+            
+            if (statusFilter) {
+                filtered = filtered.filter(license => {
+                    const expiryDate = new Date(license.expires_at);
+                    const isActive = license.is_active;
+                    
+                    switch(statusFilter) {
+                        case 'active':
+                            return isActive && expiryDate > now;
+                        case 'expired':
+                            return expiryDate < now;
+                        case 'expiring':
+                            return isActive && expiryDate > now && expiryDate <= sevenDaysFromNow;
+                        default:
+                            return true;
+                    }
+                });
+            }
+            
+            // Apply sorting
+            if (sortBy) {
+                const [field, order] = sortBy.split('_');
+                const isAsc = order === 'asc';
+                
+                filtered.sort((a, b) => {
+                    let valA, valB;
+                    
+                    if (field === 'created' || field === 'expires') {
+                        const fieldName = field + '_at';
+                        valA = new Date(a[fieldName]);
+                        valB = new Date(b[fieldName]);
+                    } else {
+                        valA = a[field] || '';
+                        valB = b[field] || '';
+                    }
+                    
+                    if (valA < valB) return isAsc ? -1 : 1;
+                    if (valA > valB) return isAsc ? 1 : -1;
+                    return 0;
+                });
+            }
+            
+            // Re-display filtered results
+            displayLicenses(filtered);
+        }
+
+        function exportLicensesToCSV() {
+            if (!allLicenses || allLicenses.length === 0) {
+                alert('ไม่มีข้อมูลให้ Export');
+                return;
+            }
+            
+            // CSV Header
+            let csv = 'License Key,Account ID,Max Activations,Current Activations,Created At,Expires At,Status,Active\n';
+            
+            // CSV Rows
+            allLicenses.forEach(license => {
+                const expiryDate = new Date(license.expires_at);
+                const isExpired = expiryDate < new Date();
+                const status = license.is_active && !isExpired ? 'Active' : 'Inactive';
+                
+                const row = [
+                    license.license_key,
+                    license.account_id || 'Not Bound',
+                    license.max_activations,
+                    license.current_activations || 0,
+                    new Date(license.created_at).toLocaleString('th-TH'),
+                    new Date(license.expires_at).toLocaleString('th-TH'),
+                    status,
+                    license.is_active ? 'Yes' : 'No'
+                ].map(value => `"${value}"`).join(',');
+                
+                csv += row + '\n';
             });
+            
+            // Download
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `licenses_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert('✅ Export สำเร็จ!');
         }
 
         async function revokeLicense(id, key) {
