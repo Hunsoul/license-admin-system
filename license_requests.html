@@ -594,21 +594,23 @@
             
             <div class="sidebar-divider"></div>
             
-            <div class="sidebar-section" id="adminSection">
-                <div class="sidebar-section-title">Administration</div>
+                        <div class="sidebar-section" id="adminSection">
+                <div class="sidebar-section-title">ADMINISTRATION</div>
                 <a href="team.html" class="sidebar-item">
-                    <span class="sidebar-icon">👔</span>
+                    <span class="sidebar-icon">👨‍💼</span>
                     <span>Team Management</span>
-                </a>                
+                </a>
+                
                 <!-- 🆕 ACTIVITY LOGS - OWNER ONLY -->
                 <a href="activity_logs.html" class="sidebar-item" id="activityLogsMenu" style="display: none;">
                     <span class="sidebar-icon">📝</span>
                     <span>Activity Logs</span>
                     <span class="owner-only-badge">👑</span>
                 </a>
-                <a href="approvals.html" class="sidebar-item">
-                    <span class="sidebar-icon">✅</span>
-                    <span>Approvals</span>
+                
+                <a href="settings.html" class="sidebar-item">
+                    <span class="sidebar-icon">⚙️</span>
+                    <span>Settings</span>
                 </a>
             </div>
         </div>
@@ -773,6 +775,15 @@
             const roleBadge = document.getElementById('userRole');
             roleBadge.textContent = userRole.toUpperCase();
             roleBadge.className = 'badge badge-' + userRole;
+        
+        // 🔐 Show Activity Logs menu only for OWNER
+        if (userRole === 'owner') {
+            const activityLogsMenu = document.getElementById('activityLogsMenu');
+            if (activityLogsMenu) {
+                activityLogsMenu.style.display = 'flex';
+            }
+        }
+
             
             if (userRole === 'staff') {
                 document.getElementById('adminSection').style.display = 'none';

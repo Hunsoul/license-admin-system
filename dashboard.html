@@ -642,6 +642,15 @@
             const roleBadge = document.getElementById('userRole');
             roleBadge.textContent = userRole.toUpperCase();
             roleBadge.className = 'badge badge-' + userRole;
+        
+        // 🔐 Show Activity Logs menu only for OWNER
+        if (userRole === 'owner') {
+            const activityLogsMenu = document.getElementById('activityLogsMenu');
+            if (activityLogsMenu) {
+                activityLogsMenu.style.display = 'flex';
+            }
+        }
+
             document.getElementById('welcomeRole').textContent = userRole.toUpperCase();
             
             if (userRole === 'staff') {
